@@ -19,7 +19,7 @@
       "@ui/*": ["./src/components/ui/*"],
       "@hooks/*": ["./src/lib/hooks/*"],
       "@utils/*": ["./src/lib/utils/*"],
-      "@types/*": ["./src/lib/types/*"]
+      "@typesProj/*": ["./src/lib/types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

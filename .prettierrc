@@ -13,7 +13,7 @@
   "singleQuote": true,
   "tabWidth": 2,
   "plugins": ["prettier-plugin-tailwindcss"],
-  "tailwindConfig": "libs/shared/utils/src/tailwind/tailwind.config.js",
+  "tailwindConfig": "tailwind.config.ts",
   "trailingComma": "none",
   "useTabs": false,
   "overrides": [

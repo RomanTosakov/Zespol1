@@ -9,13 +9,17 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-  
+
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
     "noUnusedParameters": false,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@hooks/*": ["./src/lib/hooks/*"],
+      "@utils/*": ["./src/lib/utils/*"],
+      "@types/*": ["./src/lib/types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

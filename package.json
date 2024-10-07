@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "types": " supabase gen types --lang=typescript --local --schema public  --schema storage > ./src/lib/types/supabase-types.ts "
+    "types": "supabase gen types --lang=typescript --local --schema public  --schema storage > ./src/lib/types/supabase-types.ts "
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
@@ -43,6 +43,9 @@
     "@radix-ui/react-tooltip": "^1.1.3",
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.4",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/typography": "^0.5.15",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
     "class-variance-authority": "^0.7.0",
@@ -68,7 +71,8 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
-    "vaul": "^1.0.0"
+    "vaul": "^1.0.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",

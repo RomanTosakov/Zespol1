@@ -6,7 +6,8 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "types": " supabase gen types --lang=typescript --local --schema public  --schema storage > ./src/lib/types/supabase-types.ts "
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",

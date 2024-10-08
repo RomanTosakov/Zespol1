@@ -1,9 +1,7 @@
-import { enterEmailSchema } from '@/lib/schemas/enterEmail'
-import { signUpSchema } from '@/lib/schemas/signUp'
+import { signInSchema } from '@/lib/schemas/signIn'
 import { TApiError, TSupabaseClient } from '@/lib/types/api'
-import { TSignInForm, TSignUpForm } from '@/lib/types/auth'
+import { TSignInForm } from '@/lib/types/auth'
 import { ValidateForm } from '@/lib/utils/api/ValidateForm'
-import { createAdminSupabase } from '@/lib/utils/supabase/createAdminSupabase'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
@@ -14,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     switch (method) {
       case 'POST':
-        return await ValidateForm({ req, res, supabase, handler: handlePOST, schema: signUpSchema })
+        return await ValidateForm({ req, res, supabase, handler: handlePOST, schema: signInSchema })
 
       default:
         res.setHeader('Allow', ['POST'])

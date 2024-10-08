@@ -30,6 +30,7 @@ export const EnterEmailForm: React.FC<TProps> = ({ setAuthStep, setEmail }) => {
       onSuccess: user => {
         if (user.email) {
           setAuthStep('login')
+          setEmail(data.email)
         } else {
           setAuthStep('register')
           setEmail(data.email)

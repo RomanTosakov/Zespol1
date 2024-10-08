@@ -3,6 +3,7 @@ import { TAuthSteps } from '@typesProj/auth'
 import { useState } from 'react'
 import { EnterEmailForm } from './components/EnterEmailForm'
 import { SignUpForm } from './components/SignUpForm'
+import { SignInForm } from './components/SignInForm'
 
 export const AuthView = () => {
   const [step, setStep] = useState<TAuthSteps>('enter-email')
@@ -12,6 +13,7 @@ export const AuthView = () => {
     <div className='flex h-full items-center justify-center'>
       {step === 'enter-email' && <EnterEmailForm setAuthStep={setStep} setEmail={setEmail} />}
       {step === 'register' && <SignUpForm setAuthStep={setStep} email={email!} />}
+      {step === 'login' && <SignInForm setAuthStep={setStep} email={email!} />}
     </div>
   )
 }

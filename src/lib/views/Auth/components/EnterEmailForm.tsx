@@ -46,8 +46,8 @@ export const EnterEmailForm: React.FC<TProps> = ({ setAuthStep, setEmail }) => {
       </Head>
       <form onSubmit={formMethods.handleSubmit(onSubmit)}>
         <Card className='w-fit'>
-          <CardHeader>
-            <CardTitle className='text-center text-2xl'>Welcome</CardTitle>
+          <CardHeader className='text-center'>
+            <CardTitle className='text-2xl'>Welcome</CardTitle>
             <CardDescription>Enter your email below to continue</CardDescription>
           </CardHeader>
           <CardContent className='grid gap-4'>

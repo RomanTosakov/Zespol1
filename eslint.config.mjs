@@ -1,55 +1,60 @@
-import _import from "eslint-plugin-import";
-import { fixupPluginRules } from "@eslint/compat";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import _import from 'eslint-plugin-import'
+import { fixupPluginRules } from '@eslint/compat'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import js from '@eslint/js'
+import { FlatCompat } from '@eslint/eslintrc'
+import pluginQuery from '@tanstack/eslint-plugin-query'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all
+})
 
-export default [{
-    ignores: ["*/resources.d.ts"],
-}, ...compat.extends(
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-), {
+export default [
+  ...pluginQuery.configs['flat/recommended'],
+  {
+    ignores: ['*/resources.d.ts']
+  },
+  ...compat.extends('next/core-web-vitals', 'plugin:@typescript-eslint/recommended', 'prettier'),
+  {
     plugins: {
-        import: fixupPluginRules(_import),
+      import: fixupPluginRules(_import)
     },
 
     settings: {
-        "import/parsers": {
-            "@typescript-eslint/parser": [".ts", ".tsx"],
-        },
+      'import/parsers': {
+        '@typescript-eslint/parser': ['.ts', '.tsx']
+      },
 
-        "import/resolver": {
-            typescript: {
-                alwaysTryTypes: true,
-                project: ["./tsconfig.json"],
-            },
-        },
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: ['./tsconfig.json']
+        }
+      }
     },
 
     rules: {
-        "react/display-name": "off",
-        "@next/next/no-img-element": "off",
-        "react/no-unescaped-entities": "off",
-        "import/no-anonymous-default-export": "off",
-        "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/ban-ts-comment": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-non-null-assertion": "off",
-        "newline-before-return": "error",
+      'react/display-name': 'off',
+      '@next/next/no-img-element': 'off',
+      'react/no-unescaped-entities': 'off',
+      'import/no-anonymous-default-export': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      'newline-before-return': 'error',
 
-        "import/newline-after-import": ["error", {
-            count: 1,
-        }],
-    },
-}];
+      'import/newline-after-import': [
+        'error',
+        {
+          count: 1
+        }
+      ]
+    }
+  }
+]

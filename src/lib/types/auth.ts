@@ -12,3 +12,14 @@ export type TEnterEmailResponse = {
   email: string
   name: string
 }
+
+export type TSignUpForm = {
+  full_name: string
+  password: string
+  email: string
+}
+
+export type TSignInForm = {
+  email: string
+  password: string
+}

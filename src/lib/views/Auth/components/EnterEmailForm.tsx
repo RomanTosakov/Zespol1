@@ -11,9 +11,10 @@ import { useForm } from 'react-hook-form'
 
 type TProps = {
   setAuthStep: (step: TAuthSteps) => void
+  setEmail: (email: string | null) => void
 }
 
-export const EnterEmailForm: React.FC<TProps> = ({ setAuthStep }) => {
+export const EnterEmailForm: React.FC<TProps> = ({ setAuthStep, setEmail }) => {
   const formMethods = useForm<TEnterEmailForm>({
     defaultValues: {
       email: ''
@@ -25,8 +26,16 @@ export const EnterEmailForm: React.FC<TProps> = ({ setAuthStep }) => {
   const checkEmail = useCheckEmail()
 
   const onSubmit = (data: TEnterEmailForm) => {
-    console.log(data)
-    checkEmail.mutate(data)
+    checkEmail.mutate(data, {
+      onSuccess: user => {
+        if (user.email) {
+          setAuthStep('login')
+        } else {
+          setAuthStep('register')
+          setEmail(data.email)
+        }
+      }
+    })
   }
 
   return (
@@ -48,7 +57,7 @@ export const EnterEmailForm: React.FC<TProps> = ({ setAuthStep }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
-                    <Input {...field} placeholder='qwe@example.com' />
+                    <Input {...field} autoComplete='email' placeholder='qwe@example.com' />
                     <FormMessage />
                   </FormItem>
                 )}

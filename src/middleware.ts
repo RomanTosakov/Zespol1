@@ -50,10 +50,10 @@ export async function middleware(req: NextRequest, res: NextResponse) {
     )
 
     const {
-      data: { session }
-    } = await supabase.auth.getSession()
+      data: { user }
+    } = await supabase.auth.getUser()
 
-    const sessionExist = !!session
+    const sessionExist = !!user
 
     if (isCurrentPathInMixedUrls(req)) {
       return NextResponse.next()
@@ -68,7 +68,7 @@ export async function middleware(req: NextRequest, res: NextResponse) {
 
     if (sessionExist && isCurrentPathInPublicUrls(req)) {
       const redirectUrl = req.nextUrl.clone()
-      redirectUrl.pathname = '/'
+      redirectUrl.pathname = '/projects'
 
       return NextResponse.redirect(redirectUrl)
     }

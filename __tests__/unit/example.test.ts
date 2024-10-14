@@ -1,7 +1,5 @@
-
-
-describe('example', () {
-    it('should work', () => {
-        expect(true).toBe(true)
-    })
-    })
+describe('Example', () => {
+  it('should return true', () => {
+    expect(true).toBe(true)
+  })
+})

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "types": "supabase gen types --lang=typescript --local --schema public  --schema storage > ./src/lib/types/supabase-types.ts ",
-    "test": "jest --testPathPattern=__tests__/unit"
+    "test": "jest ",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
@@ -49,6 +50,7 @@
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "@tanstack/react-query": "^5.59.0",
+    "@types/jest": "^29.5.13",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
     "axios": "^1.7.7",

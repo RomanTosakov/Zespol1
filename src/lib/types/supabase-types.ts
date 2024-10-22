@@ -15,27 +15,24 @@ export type Database = {
           email: string
           id: string
           name: string | null
-          user_id: string
         }
         Insert: {
           created_at?: string
           email: string
-          id?: string
+          id: string
           name?: string | null
-          user_id: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           name?: string | null
-          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -45,7 +42,9 @@ export type Database = {
         Row: {
           created_at: string
           deleted_at: string | null
+          email: string
           id: string
+          name: string
           profile_id: string
           project_id: string
           role: Database["public"]["Enums"]["user_role"]
@@ -53,7 +52,9 @@ export type Database = {
         Insert: {
           created_at?: string
           deleted_at?: string | null
+          email: string
           id?: string
+          name: string
           profile_id: string
           project_id: string
           role: Database["public"]["Enums"]["user_role"]
@@ -61,7 +62,9 @@ export type Database = {
         Update: {
           created_at?: string
           deleted_at?: string | null
+          email?: string
           id?: string
+          name?: string
           profile_id?: string
           project_id?: string
           role?: Database["public"]["Enums"]["user_role"]
@@ -89,20 +92,34 @@ export type Database = {
           deleted_at: string | null
           id: string
           name: string
+          primary_owner: string
+          slug: string
         }
         Insert: {
           created_at?: string
           deleted_at?: string | null
           id?: string
           name: string
+          primary_owner: string
+          slug: string
         }
         Update: {
           created_at?: string
           deleted_at?: string | null
           id?: string
           name?: string
+          primary_owner?: string
+          slug?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_primary_owner_fkey"
+            columns: ["primary_owner"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

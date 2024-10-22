@@ -1,4 +1,4 @@
-import { PublicLayout } from '@/components/layout/PublicLayout'
+import { PrivateLayout } from '@/components/layout/PrivateLayout'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import '@/styles/globals.css'
 import NiceModal from '@ebay/nice-modal-react'
@@ -12,15 +12,18 @@ const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps }: AppProps) {
   const supabase = createBrowserSupabase()
+  const getLayout =
+    //@ts-ignore
+    Component.getLayout ?? (page => <PrivateLayout>{page}</PrivateLayout>)
 
   return (
     <QueryClientProvider client={queryClient}>
       <NiceModal.Provider>
         <ThemeProvider defaultTheme='dark' attribute='class' forcedTheme='dark' disableTransitionOnChange>
-          <main className={`${GeistSans.variable} ${GeistMono.variable} ${GeistSans.className}`}>
-            <PublicLayout>
-              <Component {...pageProps} />
-            </PublicLayout>
+          <main
+            className={`${GeistSans.variable} ${GeistMono.variable} h-dvh w-full overflow-hidden ${GeistSans.className}`}
+          >
+            {getLayout(<Component {...pageProps} />)}
           </main>
         </ThemeProvider>
       </NiceModal.Provider>

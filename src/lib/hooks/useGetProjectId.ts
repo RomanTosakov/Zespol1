@@ -38,4 +38,6 @@ export const useGetProjectId = () => {
       }
     }
   }, [data, setProjectId, failureCount])
+
+  return projectId
 }

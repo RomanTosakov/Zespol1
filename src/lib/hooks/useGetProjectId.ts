@@ -9,13 +9,13 @@ type TResponse = {
 }
 
 export const useGetProjectId = () => {
-  const { query } = useRouter()
+  const { query, push } = useRouter()
 
   const projectSlug = query.projectSlug as string
 
   const { projectId, setProjectId } = useProjectsStore()
 
-  const { data, ...rest } = useQuery<unknown, Error, TResponse>({
+  const { data, failureCount, ...rest } = useQuery<unknown, Error, TResponse>({
     queryKey: ['projects', 'id', projectSlug],
     queryFn: () => {
       const data = axios.get<TResponse>(`/slugs/${projectSlug}/exchange`)
@@ -30,8 +30,12 @@ export const useGetProjectId = () => {
   })
 
   useEffect(() => {
-    if (data) {
-      setProjectId(data.id)
+    if (failureCount) {
+      push('/')
+    } else {
+      if (data) {
+        setProjectId(data.id)
+      }
     }
-  }, [data, setProjectId])
+  }, [data, setProjectId, failureCount])
 }

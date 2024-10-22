@@ -41,6 +41,7 @@ export const SignInForm: React.FC<TProps> = ({ setAuthStep, email }) => {
           <CardHeader className='text-center'>
             <CardTitle className='relative text-2xl'>
               <Button
+                type='button'
                 variant={'ghost'}
                 className='absolute left-0 top-0 px-0 hover:bg-popover'
                 onClick={() => {

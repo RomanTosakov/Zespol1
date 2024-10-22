@@ -1,16 +1,5 @@
-import { GetStaticProps, GetStaticPropsContext } from 'next'
+import { CreateProjectView } from '@/lib/views/create-project/CreateProjectView'
 
 export default function Page() {
-  return <div></div>
-}
-
-export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
-  const { params } = context
-
-  return {
-    props: {
-      isPublic: false,
-      isCreateOrg: true
-    }
-  }
+  return <CreateProjectView />
 }

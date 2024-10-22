@@ -56,7 +56,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
-        user_id: data.user.id,
+        id: data.user.id,
         email,
         name: full_name
       })

@@ -15,27 +15,24 @@ export type Database = {
           email: string
           id: string
           name: string | null
-          user_id: string
         }
         Insert: {
           created_at?: string
           email: string
-          id?: string
+          id: string
           name?: string | null
-          user_id: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           name?: string | null
-          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },

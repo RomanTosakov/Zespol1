@@ -22,7 +22,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <NiceModal.Provider>
         <ThemeProvider defaultTheme='dark' attribute='class' forcedTheme='dark' disableTransitionOnChange>
-          <main className={`${GeistSans.variable} ${GeistMono.variable} ${GeistSans.className}`}>
+          <main
+            className={`${GeistSans.variable} ${GeistMono.variable} h-dvh w-full overflow-hidden ${GeistSans.className}`}
+          >
             {getLayout(<Component {...pageProps} />)}
           </main>
         </ThemeProvider>

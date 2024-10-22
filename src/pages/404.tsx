@@ -1,14 +1,14 @@
-const Page = () => {
-  return <></>
-}
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
-export const getStaticProps = () => {
-  return {
-    redirect: {
-      destination: '/',
-      permanent: false
-    }
-  }
+const Page = () => {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push('/')
+  }, [router])
+
+  return <></>
 }
 
 export default Page

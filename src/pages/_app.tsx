@@ -1,5 +1,6 @@
 import { PrivateLayout } from '@/components/layout/PrivateLayout'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { useGetProjectId } from '@/lib/hooks/useGetProjectId'
 import '@/styles/globals.css'
 import NiceModal from '@ebay/nice-modal-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'

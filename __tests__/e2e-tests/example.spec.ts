@@ -24,3 +24,21 @@ test('Entering email', async ({ page }) => {
 
   await expect(page).toHaveTitle(/Fill form/)
 })
+
+test('Has Logout button', async ({ page }) => {
+  await page.goto('/')
+
+  const button = await page.getByText('')
+  await expect(button).toBeVisible()
+})
+
+test('Entering title project', async ({ page }) => {
+  await page.goto('/')
+  const input = await page.getByPlaceholder('Project name')
+  const button = await page.getByText('Create')
+  var title = 'test1'
+  input.fill(title)
+  button.click()
+
+  //await expect(page).toHaveURL(localhost:3000/projects/{title})
+})

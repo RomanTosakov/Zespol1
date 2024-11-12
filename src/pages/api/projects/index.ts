@@ -15,9 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (method) {
       case 'POST':
         return await ValidateForm({ req, res, supabase, handler: handlePOST, schema: orgSchema })
+      case 'GET':
+        return await handleGET(req, res, supabase)
 
       default:
-        res.setHeader('Allow', ['POST'])
+        res.setHeader('Allow', ['POST', 'GET'])
 
         return res.status(405).end(`Method ${method} Not Allowed`)
     }
@@ -160,6 +162,50 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
     return res.status(200).json({
       data
     })
+  } catch (error) {
+    const errorData = error as TApiError
+
+    return res.status(errorData.status).json({ error: errorData.message })
+  }
+}
+
+const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TSupabaseClient) => {
+  try {
+    const { data: user, error: userError } = await supabase.auth.getUser()
+
+    if (userError) {
+      const errorData: TApiError = {
+        message: userError.message,
+        status: 400
+      }
+
+      throw errorData
+    }
+
+    if (!user || !user.user.email) {
+      const errorData: TApiError = {
+        message: 'User not found',
+        status: 404
+      }
+
+      throw errorData
+    }
+
+    const { data: projects, error: projectsErrors } = await supabase
+      .from('projects')
+      .select('*, project_members!inner(*)')
+      .eq('project_members.profile_id', user.user.id)
+
+    if (projectsErrors) {
+      const errorData: TApiError = {
+        message: projectsErrors.message,
+        status: 400
+      }
+
+      throw errorData
+    }
+
+    return res.status(200).json(projects)
   } catch (error) {
     const errorData = error as TApiError
 

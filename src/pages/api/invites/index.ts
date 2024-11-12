@@ -64,7 +64,7 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
       throw errorData
     }
 
-    return res.status(200).json({ invites })
+    return res.status(200).json(invites)
   } catch (error) {
     const errorData = error as TApiError
 

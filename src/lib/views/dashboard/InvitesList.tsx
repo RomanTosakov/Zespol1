@@ -8,7 +8,7 @@ export const InvitesList = () => {
     <div className='pr-6'>
       {isLoading ? (
         <div className='flex flex-col gap-2'>
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 2 }).map((_, i) => (
             <Skeleton key={i} className='h-9 w-[150px]' />
           ))}
         </div>

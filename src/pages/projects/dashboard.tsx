@@ -1,7 +1,7 @@
-import { PublicLayout } from '@/components/layout/PublicLayout'
+import { DashboardView } from '@/lib/views/dashboard/DashboardView'
 
 const Page = () => {
-  return <></>
+  return <DashboardView />
 }
 
 export default Page

@@ -6,7 +6,9 @@ import { orgSchema } from '@/lib/schemas/orgSchema'
 import { TOrgForm } from '@/lib/types/org'
 import { useCreateProject } from '@/lib/utils/api/hooks/useCreateProject'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { ArrowLeft } from 'lucide-react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 
 export const CreateProjectView = () => {
@@ -34,6 +36,11 @@ export const CreateProjectView = () => {
           <Card className='w-fit'>
             <CardHeader className='text-center'>
               <CardTitle className='relative text-2xl'>
+                <Link href={'/projects/dashboard'} passHref>
+                  <Button type='button' variant={'ghost'} className='absolute left-0 top-0 px-0 hover:bg-popover'>
+                    <ArrowLeft />
+                  </Button>
+                </Link>
                 <span>Create project</span>
               </CardTitle>
               <CardDescription>Enter name</CardDescription>

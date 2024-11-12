@@ -46,15 +46,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
   }
 
-  if (!usersProjects.length) {
-    return {
-      redirect: {
-        destination: '/projects/create',
-        permanent: false
-      }
-    }
-  }
-
   if (usersProjects.length === 1) {
     return {
       redirect: {

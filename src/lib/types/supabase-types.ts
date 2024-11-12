@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      invitations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          invited_by: string
+          project_id: string
+          role: Database["public"]["Enums"]["user_role"]
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          invited_by: string
+          project_id: string
+          role: Database["public"]["Enums"]["user_role"]
+          token: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          invited_by?: string
+          project_id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "project_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

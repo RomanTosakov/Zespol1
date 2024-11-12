@@ -1,16 +1,20 @@
-export const useNavItems = () => {
+type TProps = {
+  projectSlug: string
+}
+
+export const useNavItems = ({ projectSlug }: TProps) => {
   return [
     {
-      href: '/',
-      label: 'Home'
+      label: 'Team',
+      href: `/projects/${projectSlug}/team`
     },
     {
-      href: '/projects',
-      label: 'Projects'
+      label: 'Boards',
+      href: `/projects/${projectSlug}/boards`
     },
     {
-      href: '/auth',
-      label: 'Auth'
+      label: 'Setting',
+      href: `/projects/${projectSlug}/settings`
     }
   ]
 }

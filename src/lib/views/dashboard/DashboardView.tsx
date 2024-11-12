@@ -4,10 +4,14 @@ import Link from 'next/link'
 import { InvitesList } from './InvitesList'
 import { ProjectsList } from './ProjectsList'
 import { Separator } from '@/components/ui/separator'
+import Head from 'next/head'
 
 export const DashboardView = () => {
   return (
     <div className='flex h-full w-full items-center justify-center'>
+      <Head>
+        <title>Dashboard</title>
+      </Head>
       <Card>
         <CardHeader>
           <CardTitle>Projects</CardTitle>

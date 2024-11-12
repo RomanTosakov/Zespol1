@@ -10,7 +10,7 @@ describe('Example', () => {
   })
 })
 
-describe('EnteremailSchema', () => {
+describe('Enter emailSchema', () => {
   it('should validate', async () => {
     const body: TEnterEmailForm = { email: 'coolmail@2.com' }
     const result = await enterEmailSchema.validate(body)
@@ -38,6 +38,7 @@ describe('signInSchema', () => {
     try {
       const body: TSignInForm = { email: 'alexey199124gmail.com', password: 'adasdaasdasdasd' }
       const result = await signInSchema.validate(body)
+
       expect(false).toBe(true)
     } catch (error) {
       expect(error).toBeTruthy
@@ -47,6 +48,7 @@ describe('signInSchema', () => {
   it('should throw error password', async () => {
     try {
       const body: TSignInForm = { email: 'example@gmail.com', password: '' }
+
       const result = await signInSchema.validate(body)
       expect(false).toBe(true)
     } catch (error) {
@@ -57,6 +59,7 @@ describe('signInSchema', () => {
   it('should throw error email password', async () => {
     try {
       const body: TSignInForm = { email: 'examplegmail.com', password: '' }
+
       const result = await signInSchema.validate(body)
       expect(false).toBe(true)
     } catch (error) {

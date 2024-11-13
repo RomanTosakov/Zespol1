@@ -10,8 +10,9 @@ test('create new project', async ({ page }) => {
   await page.goto('/projects/create')
 
   const input = await page.getByPlaceholder('Project name')
-  const button = await page.getByText('Create')
+  await input.waitFor({ state: 'visible' });
+  const button = await page.locator('button', { hasText: 'Create' });
 
-  input.fill('Test project')
-  button.click()
+  await input.fill('Test project')
+  await button.click()
 })

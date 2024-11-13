@@ -10,7 +10,7 @@ setup('authenticate', async ({ page }) => {
 
   await page.click('button[type="submit"]')
 
-  await page.fill('input[name="password"]', 'Hjvfirf2004+')
+  await page.fill('input[name="password"]', 'qweqweqwe')
 
   await page.click('button[type="submit"]')
 

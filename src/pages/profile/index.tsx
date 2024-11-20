@@ -3,15 +3,13 @@ import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { ProfileView } from '@/lib/views/profile/ProfileView';
 import { TProfile } from '@/lib/types/profile';
 
-interface PageProps {
-  profile: TProfile;
-}
-
-export default function Page({ profile }: PageProps) {
+export default function Page({ profile }: { profile: TProfile }) {
   return <ProfileView profile={profile} />;
 }
 
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   const supabase = createServerPropsSupabase(context);
 
   const { data: userData, error: userError } = await supabase.auth.getUser();

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; 
 import { Button } from '@/components/ui/button';
-import { TProfile } from '@/lib/types/supabase-types';
+import { TProfile } from '@/lib/types/profile';
 import Head from 'next/head';
 
 interface ProfileViewProps {
@@ -18,7 +18,7 @@ export const ProfileView = ({ profile }: ProfileViewProps) => {
       </Head>
       <Card>
         <CardHeader>
-          <CardTitle>Profile:</CardTitle>
+          <CardTitle>Your profile</CardTitle>
         </CardHeader>
         <CardContent>
           <CardDescription>Name: {profile.name}</CardDescription>

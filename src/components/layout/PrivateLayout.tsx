@@ -1,6 +1,6 @@
 import { useGetProjectId } from '@/lib/hooks/useGetProjectId'
 import { cn } from '@/lib/utils'
-import { LogOut, PanelsTopLeft, Presentation, Settings, User2, Users } from 'lucide-react'
+import { LogOut, PanelsTopLeft, Presentation, Settings, User, User2, Users } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 import {
@@ -51,6 +51,13 @@ export const PrivateLayout: React.FC<TProps> = ({ children }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Profile menu</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href={'/profile'} className='cursor-pointer'>
+                  <User className='mr-2' />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
             <DropdownMenuSeparator />
 
             <DropdownMenuItem asChild>

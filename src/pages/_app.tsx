@@ -1,5 +1,6 @@
 import { PrivateLayout } from '@/components/layout/PrivateLayout'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { Toaster } from '@/components/ui/sonner'
 import '@/styles/globals.css'
 import NiceModal from '@ebay/nice-modal-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -23,6 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <main
             className={`${GeistSans.variable} ${GeistMono.variable} h-dvh w-full overflow-hidden ${GeistSans.className}`}
           >
+            <Toaster position='top-right' />
             {getLayout(<Component {...pageProps} />)}
           </main>
         </ThemeProvider>

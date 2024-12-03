@@ -32,16 +32,20 @@ export const PrivateLayout: React.FC<TProps> = ({ children }) => {
     <div vaul-drawer-wrapper='' className={cn('grid h-dvh w-full grid-rows-[auto_1fr] overflow-hidden bg-card')}>
       <div className='flex h-fit justify-between border-b p-3'>
         <div className='flex items-center gap-4'>
-          {navItems.map((item, index) => (
-            <Link key={index} href={item.href} passHref>
-              <Button variant='ghost' className='flex items-center gap-2'>
-                {index === 0 && <Users />}
-                {index === 1 && <Presentation />}
-                {index === 2 && <Settings />}
-                {item.label}
-              </Button>
-            </Link>
-          ))}
+          {router.query.projectSlug && (
+            <>
+              {navItems.map((item, index) => (
+                <Link key={index} href={item.href} passHref>
+                  <Button variant='ghost' className='flex items-center gap-2'>
+                    {index === 0 && <Users />}
+                    {index === 1 && <Presentation />}
+                    {index === 2 && <Settings />}
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
+            </>
+          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -52,12 +56,12 @@ export const PrivateLayout: React.FC<TProps> = ({ children }) => {
           <DropdownMenuContent>
             <DropdownMenuLabel>Profile menu</DropdownMenuLabel>
             <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href={'/profile'} className='cursor-pointer'>
-                  <User className='mr-2' />
-                  Profile
-                </Link>
-              </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={'/profile'} className='cursor-pointer'>
+                <User className='mr-2' />
+                Profile
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
 
             <DropdownMenuItem asChild>

@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -9,23 +13,40 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
     "noUnusedParameters": false,
-
     "paths": {
-      "@/*": ["./src/*"],
-      "@ui/*": ["./src/components/ui/*"],
-      "@hooks/*": ["./src/lib/hooks/*"],
-      "@utils/*": ["./src/lib/utils/*"],
-      "@typesProj/*": ["./src/lib/types/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "@ui/*": [
+        "./src/components/ui/*"
+      ],
+      "@hooks/*": [
+        "./src/lib/hooks/*"
+      ],
+      "@utils/*": [
+        "./src/lib/utils/*"
+      ],
+      "@typesProj/*": [
+        "./src/lib/types/*"
+      ]
+    },
+    "target": "ES2017"
   },
   "typeAcquisition": {
-    "include": ["jest"]
+    "include": [
+      "jest"
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,13 +1,13 @@
 import * as React from 'react';
 
 interface EmailTemplateProps {
-  firstName: string; // Имя приглашённого пользователя
-  inviterName: string; // Имя пригласившего пользователя
-  projectName: string; // Название проекта
-  role: string; // Роль пользователя в проекте
-  inviteDate: string; // Дата приглашения
-  token: string; // Токен приглашения
-  inviteId: string; // ID приглашения
+  firstName: string; // Invited user's first name
+  inviterName: string; // Inviter's name
+  projectName: string; // Project name
+  role: string; // User's role in the project
+  inviteDate: string; // Invitation date
+  token: string; // Invitation token
+  inviteId: string; // Invitation ID
 }
 
 export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
@@ -19,16 +19,15 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   token,
   inviteId
 }) => {
-  const acceptLink = `http://localhost:3000/api/invites/${inviteId}/accept?token=${token}`;
+  const acceptLink = `http://tosakov.com/api/invites/${inviteId}/accept?token=${token}`;
 
   return  (
   <div style={styles.container}>
-    {/* Заголовок */}
+
     <h1 style={styles.heading}>
       You’ve been invited to join <span style={styles.projectName}>{projectName}</span>!
     </h1>
 
-    {/* Основной текст */}
     <p style={styles.paragraph}>
       Hi <span style={styles.highlight}>{firstName}</span>,
     </p>
@@ -39,24 +38,21 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
       <span style={styles.role}>{role}</span>.
     </p>
 
-    {/* Дата приглашения */}
     <p style={styles.date}>Invitation Date: {inviteDate}</p>
 
-    {/* Кнопка */}
     <div style={styles.buttonContainer}>
       <a href={acceptLink} style={styles.button}>
         Accept Invitation
       </a>
     </div>
 
-    {/* Footer */}
+
     <p style={styles.footer}>
       If you did not expect this invitation, you can safely ignore this email.
     </p>
   </div>
 )};
 
-// Стили с использованием JavaScript объекта
 const styles = {
   container: {
     fontFamily: '"Arial", sans-serif',

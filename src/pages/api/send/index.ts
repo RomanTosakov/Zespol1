@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { email, projectId, inviter } = req.body;
 
   try {
-    // 1. Получаем данные о проекте
+
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('name')
@@ -26,7 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    // 2. Получаем профиль приглашённого пользователя
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('name')
@@ -37,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'User profile not found' });
     }
 
-    // 3. Получаем приглашение пользователя
+    
     const { data: invitation, error: invitationError } = await supabase
       .from('invitations')
       .select('*')
@@ -49,7 +48,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'Invitation not found' });
     }
 
-    // 4. Отправка email через Resend
     const { data, error: emailError } = await resend.emails.send({
       from: 'Jira like team <noreply@tosakov.com>',
       to: [email],

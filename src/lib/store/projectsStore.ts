@@ -1,32 +1,36 @@
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 type TProjectStore = {
-  projectId: string
-  setProjectId: (projectId: string) => void
-}
+  projectId: string;
+  projectName: string;
+  setProjectId: (projectId: string) => void;
+  setProjectName: (projectName: string) => void;
+};
 
 const getProjectSlugFromPath = () => {
   if (typeof window === 'undefined') {
-    return 'server'
+    return 'server';
   }
 
-  const path = window.location.pathname
-  const parts = path.split('/')
-  const orgKey = parts.indexOf('projects')
+  const path = window.location.pathname;
+  const parts = path.split('/');
+  const orgKey = parts.indexOf('projects');
 
-  return parts[orgKey + 1] || 'global'
-}
+  return parts[orgKey + 1] || 'global';
+};
 
 export const useProjectsStore = create(
   persist<TProjectStore>(
     (set, get) => ({
       projectId: '',
-      setProjectId: projectId => set({ projectId })
+      projectName: '',
+      setProjectId: (projectId) => set({ projectId }),
+      setProjectName: (projectName) => set({ projectName }),
     }),
     {
       name: `${getProjectSlugFromPath()}-projects-store`,
-      storage: createJSONStorage(() => localStorage)
+      storage: createJSONStorage(() => localStorage),
     }
   )
-)
+);

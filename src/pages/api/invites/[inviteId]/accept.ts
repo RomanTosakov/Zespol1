@@ -121,8 +121,9 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
 
       throw errorData
     }
-
-    return res.status(200).json({ data })
+    //res.status(200).json({ data })
+    
+    res.redirect(302, `/projects/${data.project_id}`);
   } catch (error) {
     const errorData = error as TApiError
 

@@ -30,9 +30,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: TSupabaseClient) => {
   try {
-    const { email } = req.body.formData
+    const { email } = req.body.formData as { email: string }
 
-    const { data, error } = await supabase.from('profiles').select('name, email').eq('email', email).maybeSingle()
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('name, email')
+      .eq('email', email.toLowerCase())
+      .maybeSingle()
 
     if (error) {
       const errorData: TApiError = {

@@ -1,5 +1,5 @@
-import { Avatar } from '@/components/ui/avatar'
 import { TTask } from '@/lib/types/tasks'
+import { StatusChip } from './StatusChip'
 
 export const TaskRow: React.FC<{ task: TTask }> = ({ task }) => {
   return (
@@ -9,7 +9,7 @@ export const TaskRow: React.FC<{ task: TTask }> = ({ task }) => {
         <p>{task.title}</p>
       </div>
       <div className='flex gap-4'>
-        <p className='rounded-sm bg-secondary p-1 text-sm'>{task.status.toUpperCase()}</p>
+        <StatusChip task={task} />
       </div>
     </div>
   )

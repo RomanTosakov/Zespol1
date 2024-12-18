@@ -1,5 +1,7 @@
+import { BackLogView } from '@/lib/views/tasks/BackLogView'
+
 const Page = () => {
-  return null
+  return <BackLogView />
 }
 
 export default Page

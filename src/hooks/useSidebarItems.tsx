@@ -30,14 +30,14 @@ export const useSidebarItems = () => {
       isActive: lastPathname === 'backlog'
     },
     {
-      label: 'Sprints',
+      label: 'Sprints [WIP]',
       href: `/projects/${projectSlug}/boards/sprints`,
       key: 'sprints',
       icon: <Clock />,
       isActive: lastPathname === 'sprints'
     },
     {
-      label: 'Kanban',
+      label: 'Kanban [WIP]',
       href: `/projects/${projectSlug}/boards/kanban`,
       key: 'kanban',
       icon: <Columns />,
@@ -47,7 +47,7 @@ export const useSidebarItems = () => {
 
   const settingsItems: TBoardsSidebarItem[] = [
     {
-      label: 'General',
+      label: 'General [WIP]',
       href: `/projects/${projectSlug}/settings/general`,
       key: 'general',
       icon: <Wrench />,

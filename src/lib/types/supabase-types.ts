@@ -165,7 +165,11 @@ export type Database = {
           due_date: string | null
           id: string
           member_id: string | null
+          project_id: string
+          slug: string
+          sort_id: number
           start_date: string | null
+          status: string
           title: string
         }
         Insert: {
@@ -174,7 +178,11 @@ export type Database = {
           due_date?: string | null
           id?: string
           member_id?: string | null
+          project_id: string
+          slug: string
+          sort_id: number
           start_date?: string | null
+          status?: string
           title: string
         }
         Update: {
@@ -183,7 +191,11 @@ export type Database = {
           due_date?: string | null
           id?: string
           member_id?: string | null
+          project_id?: string
+          slug?: string
+          sort_id?: number
           start_date?: string | null
+          status?: string
           title?: string
         }
         Relationships: [
@@ -192,6 +204,13 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "project_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]

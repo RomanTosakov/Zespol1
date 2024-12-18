@@ -5,7 +5,11 @@ create table "public"."tasks" (
     "description" text not null default ''::text,
     "created_at" timestamp with time zone not null default now(),
     "start_date" date,
-    "due_date" date
+    "due_date" date,
+    "status" text not null default 'todo'::text,
+    "sort_id" integer not null,
+    "slug" text not null,
+    "project_id" uuid not null
 );
 
 
@@ -18,6 +22,10 @@ alter table "public"."tasks" add constraint "tasks_pkey" PRIMARY KEY using index
 alter table "public"."tasks" add constraint "tasks_member_id_fkey" FOREIGN KEY (member_id) REFERENCES project_members(id) not valid;
 
 alter table "public"."tasks" validate constraint "tasks_member_id_fkey";
+
+alter table "public"."tasks" add constraint "tasks_project_id_fkey" FOREIGN KEY (project_id) REFERENCES projects(id) not valid;
+
+alter table "public"."tasks" validate constraint "tasks_project_id_fkey";
 
 grant delete on table "public"."tasks" to "anon";
 
@@ -62,3 +70,4 @@ grant truncate on table "public"."tasks" to "service_role";
 grant update on table "public"."tasks" to "service_role";
 
 
+alter table "public"."tasks" disable row level security;

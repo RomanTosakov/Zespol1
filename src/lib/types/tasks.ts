@@ -2,10 +2,13 @@ import { TProjectMember } from './org'
 import { TSprint } from './sprints'
 import { Database } from './supabase-types'
 
+export type TTaskComment = Database['public']['Tables']['tasks_comments']['Row']
+
 export type TTask = Omit<Database['public']['Tables']['tasks']['Row'], 'status'> & {
   status: TTaskStatus
   sprints: TSprint | null
   project_members: TProjectMember | null
+  comments: TTaskComment[] | null
 }
 
 export type TInsertTask = Database['public']['Tables']['tasks']['Insert']

@@ -1,11 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog'
 import { useTask } from '@/lib/utils/api/hooks/Tasks/useTask'
 import { Skeleton } from '@/components/ui/skeleton'
 import { StatusChip } from './StatusChip'
 import { format } from 'date-fns'
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { TTask } from '@/lib/types/tasks'
-import { cleanTaskData } from '@/lib/utils/tasks'
 import { TaskMemberSelect } from './TaskMemberSelect'
 import { EditableDescription } from './EditableDescription'
 import { EditableTitle } from './EditableTitle'
@@ -15,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { CalendarIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useEditTask } from '@/lib/utils/api/hooks/Tasks/useEditTask'
+import { TaskComments } from './TaskComments'
 
 type TaskModalProps = {
   initialTask: TTask
@@ -41,7 +41,7 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
       <DialogContent className='max-w-2xl'>
         <DialogHeader>{isLoading ? <Skeleton className='h-7 w-3/4' /> : <EditableTitle task={task} />}</DialogHeader>
 
-        <div className='space-y-4'>
+        <div className='space-y-6'>
           {isLoading ? (
             <div className='space-y-2'>
               <Skeleton className='h-4 w-1/4' />
@@ -104,6 +104,8 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
                   </Popover>
                 </div>
               </div>
+
+              <TaskComments task={task} />
             </>
           )}
         </div>

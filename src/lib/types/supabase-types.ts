@@ -161,21 +161,30 @@ export type Database = {
       sprints: {
         Row: {
           created_at: string
+          description: string | null
+          end_date: string | null
           id: string
           name: string
           project_id: string
+          start_date: string | null
         }
         Insert: {
           created_at?: string
+          description?: string | null
+          end_date?: string | null
           id?: string
           name: string
           project_id: string
+          start_date?: string | null
         }
         Update: {
           created_at?: string
+          description?: string | null
+          end_date?: string | null
           id?: string
           name?: string
           project_id?: string
+          start_date?: string | null
         }
         Relationships: [
           {
@@ -250,6 +259,48 @@ export type Database = {
             columns: ["sprint_id"]
             isOneToOne: false
             referencedRelation: "sprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks_comments: {
+        Row: {
+          created_at: string
+          edited_at: string | null
+          id: string
+          member_id: string
+          task_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+          member_id: string
+          task_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+          member_id?: string
+          task_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_comments_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "project_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]

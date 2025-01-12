@@ -16,11 +16,11 @@ export const StatusChip: React.FC<{ task: TTask }> = ({ task }) => {
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className='w-[107px] cursor-pointer'>
         <p
-          className={cn('rounded-sm bg-secondary p-1 text-sm', {
-            'bg-blue-500': task.status === 'in-progress',
-            'bg-green-500': task.status === 'done'
+          className={cn('rounded-sm bg-secondary p-1 text-sm hover:bg-secondary-dimmed', {
+            'bg-blue-500 hover:bg-blue-600': task.status === 'in-progress',
+            'bg-green-500 hover:bg-green-600': task.status === 'done'
           })}
         >
           {task.status.toUpperCase()}

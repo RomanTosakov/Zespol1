@@ -30,7 +30,7 @@ export const useSidebarItems = () => {
       isActive: lastPathname === 'backlog'
     },
     {
-      label: 'Sprints [WIP]',
+      label: 'Sprints',
       href: `/projects/${projectSlug}/boards/sprints`,
       key: 'sprints',
       icon: <Clock />,

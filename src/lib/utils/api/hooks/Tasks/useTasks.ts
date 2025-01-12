@@ -13,7 +13,7 @@ export const useTasks = () => {
 
       return data
     },
-    staleTime: 1000 * 60 * 60
+    enabled: !!projectId
   })
 
   return { tasks: data, ...rest }

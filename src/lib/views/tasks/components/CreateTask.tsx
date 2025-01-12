@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input'
 import { useCreateTask } from '@/lib/utils/api/hooks/Tasks/useCreateTasks'
 import { LoaderCircle, Plus } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 export const CreateTask: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false)
@@ -11,7 +12,6 @@ export const CreateTask: React.FC = () => {
 
   const handleToggle = (val: boolean) => {
     setIsCreating(val)
-
     if (val) {
       setTitle('')
       setTimeout(() => {
@@ -21,11 +21,21 @@ export const CreateTask: React.FC = () => {
   }
 
   const handleCreateTask = useCallback(() => {
+    const trimmedTitle = title.trim()
+    if (!trimmedTitle) {
+      toast.error('Task title cannot be empty')
+      return
+    }
+
     createTask.mutate(
-      { title },
+      { title: trimmedTitle },
       {
         onSuccess: () => {
-          handleToggle(false)
+          setTitle('')
+          setIsCreating(false)
+        },
+        onError: error => {
+          toast.error(error instanceof Error ? error.message : 'Failed to create task')
         }
       }
     )
@@ -37,7 +47,7 @@ export const CreateTask: React.FC = () => {
         handleToggle(false)
       }
 
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && isCreating && !createTask.isPending) {
         handleCreateTask()
       }
     }
@@ -47,13 +57,15 @@ export const CreateTask: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [handleCreateTask])
+  }, [handleCreateTask, isCreating, createTask.isPending])
 
   return (
     <div
       className='flex w-full cursor-pointer items-center gap-1 rounded-b-sm py-1 transition-all hover:bg-secondary'
       onClick={() => {
-        handleToggle(true)
+        if (!isCreating) {
+          handleToggle(true)
+        }
       }}
     >
       {createTask.isPending ? <LoaderCircle size={16} className='animate-spin' /> : <Plus size={16} />}
@@ -61,13 +73,18 @@ export const CreateTask: React.FC = () => {
         <>
           <Input
             ref={ref}
-            onBlur={() => handleToggle(false)}
+            onBlur={e => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                handleToggle(false)
+              }
+            }}
             value={title}
             className='w-full border-none'
             onChange={e => {
               setTitle(e.target.value)
             }}
-            placeholder='What need to do?'
+            placeholder='What needs to be done?'
+            disabled={createTask.isPending}
           />
         </>
       ) : (

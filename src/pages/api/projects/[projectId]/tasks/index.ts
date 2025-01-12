@@ -1,5 +1,6 @@
+import { TASK_QUERY } from '@/lib/schemas/queries'
 import { TApiError, TSupabaseClient } from '@/lib/types/api'
-import { TInsertTask, TTaskForm } from '@/lib/types/tasks'
+import { TInsertTask, TTask, TTaskForm, TTaskOrderChange } from '@/lib/types/tasks'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
@@ -13,9 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return await handlePOST(req, res, supabase)
       case 'GET':
         return await handleGET(req, res, supabase)
-
+      case 'PUT':
+        return await handlePUT(req, res, supabase)
       default:
-        res.setHeader('Allow', ['POST', 'GET'])
+        res.setHeader('Allow', ['POST', 'GET', 'PUT'])
 
         return res.status(405).end(`Method ${method} Not Allowed`)
     }
@@ -81,9 +83,62 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
   try {
     const { projectId } = req.query as { projectId: string }
 
-    const { data: tasks, error } = await supabase.from('tasks').select('*').eq('project_id', projectId).order('sort_id')
+    const { data: tasks, error } = await supabase
+      .from('tasks')
+      .select(TASK_QUERY)
+      .eq('project_id', projectId)
+      .order('sort_id')
+
+    if (error) {
+      const errorApi = {
+        status: 400,
+        message: error.message
+      } as TApiError
+
+      throw errorApi
+    }
 
     return res.status(200).json(tasks)
+  } catch (error) {
+    const errorData = error as TApiError
+
+    return res.status(errorData.status).json({ error: errorData.message })
+  }
+}
+
+const handlePUT = async (req: NextApiRequest, res: NextApiResponse, supabase: TSupabaseClient) => {
+  try {
+    const { projectId } = req.query as { projectId: string }
+    const orderChanges = req.body as TTaskOrderChange[]
+
+    const { data: tasks, error: tasksError } = await supabase.from('tasks').select('*').eq('project_id', projectId)
+
+    if (tasksError) {
+      const errorApi = {
+        status: 400,
+        message: tasksError.message
+      } as TApiError
+
+      throw errorApi
+    }
+
+    const updatedCharts = tasks.map(task => ({
+      ...task,
+      sort_id: orderChanges.find(change => change.id === task.id)?.sort_id ?? task.sort_id
+    }))
+
+    const { data, error } = await supabase.from('tasks').upsert(updatedCharts, {})
+
+    if (error) {
+      const errorApi = {
+        status: 400,
+        message: error.message
+      } as TApiError
+
+      throw errorApi
+    }
+
+    return res.status(200).json({ message: 'Tasks updated' })
   } catch (error) {
     const errorData = error as TApiError
 

@@ -17,27 +17,21 @@ export const useGetProjectId = () => {
 
   const { data, failureCount, ...rest } = useQuery<unknown, Error, TResponse>({
     queryKey: ['projects', 'id', projectSlug],
-    queryFn: () => {
-      const data = axios.get<TResponse>(`/slugs/${projectSlug}/exchange`)
+    queryFn: async () => {
+      const data = await axios.get<TResponse>(`/slugs/${projectSlug}/exchange`)
 
+      setProjectId((data as unknown as TResponse).id)
       return data
     },
-    initialData: {
-      id: projectId
-    },
-    enabled: !!projectSlug,
-    staleTime: projectId ? 1000 * 60 * 60 : 0
+
+    enabled: !!projectSlug
   })
 
   useEffect(() => {
-    if (failureCount) {
+    if (failureCount > 0) {
       push('/')
-    } else {
-      if (data) {
-        setProjectId(data.id)
-      }
     }
-  }, [data, setProjectId, failureCount])
+  }, [data, setProjectId, failureCount, projectSlug, push])
 
   return projectId
 }

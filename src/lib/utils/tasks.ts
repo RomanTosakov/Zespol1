@@ -1,6 +1,6 @@
 import { TTask } from '../types/tasks'
 
-export const cleanTaskData = (task: TTask): Omit<TTask, 'sprints' | 'project_members'> => {
-  const { sprints, project_members, ...cleanedTask } = task
+export const cleanTaskData = (task: TTask): Omit<TTask, 'sprints' | 'project_members' | 'comments'> => {
+  const { sprints, project_members, comments, ...cleanedTask } = task
   return cleanedTask
 }

@@ -13,7 +13,7 @@ type TaskRowProps = {
 export const TaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
   return (
     <div
-      className='flex h-11 w-full items-center justify-between bg-background px-4 pl-0 hover:bg-accent'
+      className='flex h-11 w-full items-center justify-between bg-secondary-dimmed px-4 pl-0 hover:bg-accent'
       onClick={onClick}
     >
       <div className='flex items-center gap-2'>

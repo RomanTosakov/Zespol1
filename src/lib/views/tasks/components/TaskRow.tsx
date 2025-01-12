@@ -1,16 +1,25 @@
+import { useRouter } from 'next/router'
 import { TTask } from '@/lib/types/tasks'
 import { StatusChip } from './StatusChip'
 
 export const TaskRow: React.FC<{ task: TTask }> = ({ task }) => {
+  const router = useRouter()
+  const { projectSlug } = router.query
+
+  const handleTaskClick = (e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent event bubbling
+    router.push(`/projects/${projectSlug}/${task.id}/editTask`)
+  }
+
   return (
-    <div className='flex justify-between p-2 transition-all hover:bg-secondary'>
-      <div className='flex gap-4'>
-        <p>{task.slug}</p>
-        <p>{task.title}</p>
+    <div 
+      onClick={handleTaskClick}
+      className='flex w-full cursor-pointer items-center justify-between border-b p-2 hover:bg-secondary'
+    >
+      <div className='flex items-center gap-2'>
+        <p className='text-sm'>{task.title || ''}</p>
       </div>
-      <div className='flex gap-4'>
-        <StatusChip task={task} />
-      </div>
+      <StatusChip task={task} />
     </div>
   )
 }

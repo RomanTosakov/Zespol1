@@ -20,13 +20,17 @@ export const useEditTask: TUseEditTask = () => {
 
   return useMutation({
     mutationFn: async ({ formData: form, id }) => {
-      return await axios.patch(`/projects/${projectId}/tasks/${id}`, {
+      return (await axios.patch(`/projects/${projectId}/tasks/${id}`, {
         formData: form
-      })
+      })) as TTask
     },
-    onSuccess: async () => {
+    onSuccess: async data => {
       await queryClient.invalidateQueries({
         queryKey: ['tasks', projectId]
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: ['task']
       })
 
       toast.success('Task edited')

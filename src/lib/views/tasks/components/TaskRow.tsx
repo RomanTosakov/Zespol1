@@ -1,9 +1,9 @@
 import { TTask } from '@/lib/types/tasks'
+import { format } from 'date-fns'
+import { CalendarIcon, GripVerticalIcon } from 'lucide-react'
+import { EditableTitle } from './EditableTitle'
 import { StatusChip } from './StatusChip'
 import { TaskMemberSelect } from './TaskMemberSelect'
-import { EditableTitle } from './EditableTitle'
-import { CalendarIcon, GripVerticalIcon } from 'lucide-react'
-import { format } from 'date-fns'
 
 type TaskRowProps = {
   task: TTask

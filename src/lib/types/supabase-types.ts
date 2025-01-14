@@ -196,6 +196,54 @@ export type Database = {
           },
         ]
       }
+      task_files: {
+        Row: {
+          created_at: string
+          download_url: string
+          file_name: string
+          file_url: string
+          id: string
+          overview_url: string
+          project_id: string
+          task_id: string
+        }
+        Insert: {
+          created_at?: string
+          download_url: string
+          file_name: string
+          file_url: string
+          id?: string
+          overview_url: string
+          project_id: string
+          task_id: string
+        }
+        Update: {
+          created_at?: string
+          download_url?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          overview_url?: string
+          project_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_files_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_files_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           created_at: string

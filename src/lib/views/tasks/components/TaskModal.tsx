@@ -17,6 +17,9 @@ import { useEditTask } from '@/lib/utils/api/hooks/Tasks/useEditTask'
 import { TaskComments } from './TaskComments'
 import { useDeleteTask } from '@/lib/utils/api/hooks/Tasks/useDeleteTask'
 import ConfirmDialog from '@/components/ui/confirm-dialog'
+import { TaskFilesButton } from './TaskFilesButton'
+import { TaskFiles } from './TaskFiles'
+import dayjs from 'dayjs'
 
 type TaskModalProps = {
   initialTask: TTask
@@ -34,7 +37,7 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
   const handleDateChange = (date: Date | undefined) => {
     if (!task) return
     editTask({
-      formData: { ...task, due_date: date ? date.toISOString() : null },
+      formData: { ...task, due_date: date ? dayjs(date).format('YYYY-MM-DD') : null },
       id: task.id
     })
   }
@@ -134,14 +137,17 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
                     >
                       <Calendar
                         mode='single'
-                        selected={task?.due_date ? new Date(new Date(task.due_date).getTime() + 86400000) : undefined}
+                        selected={task?.due_date ? new Date(task.due_date) : undefined}
                         onSelect={handleDateChange}
                         initialFocus
                       />
                     </PopoverContent>
                   </Popover>
+                  <TaskFilesButton task={task} />
                 </div>
               </div>
+
+              <TaskFiles task={task} />
 
               <TaskComments task={task} />
             </>

@@ -1,3 +1,4 @@
+import { TFile } from './file'
 import { TProjectMember } from './org'
 import { TSprint } from './sprints'
 import { Database } from './supabase-types'
@@ -9,6 +10,7 @@ export type TTask = Omit<Database['public']['Tables']['tasks']['Row'], 'status'>
   sprints: TSprint | null
   project_members: TProjectMember | null
   comments: TTaskComment[] | null
+  files: TFile[] | null
 }
 
 export type TInsertTask = Database['public']['Tables']['tasks']['Insert']

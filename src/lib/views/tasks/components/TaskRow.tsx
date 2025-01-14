@@ -1,9 +1,9 @@
 import { TTask } from '@/lib/types/tasks'
+import { format } from 'date-fns'
+import { CalendarIcon, GripVerticalIcon } from 'lucide-react'
+import { EditableTitle } from './EditableTitle'
 import { StatusChip } from './StatusChip'
 import { TaskMemberSelect } from './TaskMemberSelect'
-import { EditableTitle } from './EditableTitle'
-import { CalendarIcon, GripVerticalIcon } from 'lucide-react'
-import { format } from 'date-fns'
 
 type TaskRowProps = {
   task: TTask
@@ -13,7 +13,7 @@ type TaskRowProps = {
 export const TaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
   return (
     <div
-      className='flex h-11 w-full items-center justify-between bg-background px-4 pl-0 hover:bg-accent'
+      className='flex h-11 w-full items-center justify-between bg-secondary-dimmed px-4 pl-0 hover:bg-accent'
       onClick={onClick}
     >
       <div className='flex items-center gap-2'>

@@ -11,10 +11,12 @@ import { EditableTitle } from './EditableTitle'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, Trash2Icon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useEditTask } from '@/lib/utils/api/hooks/Tasks/useEditTask'
 import { TaskComments } from './TaskComments'
+import { useDeleteTask } from '@/lib/utils/api/hooks/Tasks/useDeleteTask'
+import ConfirmDialog from '@/components/ui/confirm-dialog'
 
 type TaskModalProps = {
   initialTask: TTask
@@ -27,6 +29,7 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
     task: initialTask
   })
   const { mutate: editTask } = useEditTask()
+  const deleteTask = useDeleteTask()
 
   const handleDateChange = (date: Date | undefined) => {
     if (!task) return
@@ -36,10 +39,36 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
     })
   }
 
+  const handleDelete = () => {
+    NiceModal.show(ConfirmDialog, {
+      title: 'Delete Task',
+      description: 'Are you sure you want to delete this task? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      variant: 'destructive',
+      onConfirm: () => {
+        deleteTask.mutate(
+          { taskId: task!.id },
+          {
+            onSuccess: () => {
+              modal.hide()
+              console.log('Task deleted')
+            }
+          }
+        )
+      }
+    })
+  }
+
   return (
     <Dialog open={modal.visible} onOpenChange={() => modal.hide()}>
       <DialogContent className='max-w-2xl'>
-        <DialogHeader>{isLoading ? <Skeleton className='h-7 w-3/4' /> : <EditableTitle task={task} />}</DialogHeader>
+        <DialogHeader className='flex flex-row items-start justify-between pt-6'>
+          <div className='flex-1'>{isLoading ? <Skeleton className='h-7 w-3/4' /> : <EditableTitle task={task} />}</div>
+          <Button variant='ghost' size='icon' className='h-8 w-8' onClick={handleDelete}>
+            <Trash2Icon className='h-4 w-4 text-muted-foreground hover:text-destructive' />
+          </Button>
+        </DialogHeader>
 
         <div className='space-y-6'>
           {isLoading ? (

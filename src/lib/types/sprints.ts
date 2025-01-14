@@ -8,8 +8,8 @@ export type TSprintWithTasks = TSprint & {
 }
 
 export type TSprintForm = {
-  title: string
-  description: string
-  startDate: string
-  endDate: string
+  name: string
+  description: string | null
+  start_date: string | null
+  end_date: string | null
 }

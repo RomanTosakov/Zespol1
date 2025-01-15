@@ -6,7 +6,7 @@ Welcome to our project management system! This guide will help you get started w
 - [Prerequisites](#prerequisites)
 - [Branch Structure](#branch-structure)
 - [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
+- [Project Structure](docs/project-structure.md)
 - [Features](#features)
 - [Navigation Guide](#navigation-guide)
 

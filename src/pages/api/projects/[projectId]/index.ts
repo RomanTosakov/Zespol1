@@ -75,8 +75,19 @@ const handlePATCH = async (req: NextApiRequest, res: NextApiResponse, supabase: 
       throw { status: 403, message: 'Insufficient permissions' } as TApiError
     }
 
+    // Get the current project to check if slug is being changed
+    const { data: currentProject, error: currentProjectError } = await supabase
+      .from('projects')
+      .select('slug')
+      .eq('id', projectId)
+      .single()
+
+    if (currentProjectError) {
+      throw { status: 400, message: currentProjectError.message } as TApiError
+    }
+
     // Check if slug is unique if it's being changed
-    if (formData.slug) {
+    if (formData.slug && formData.slug !== currentProject.slug) {
       const { data: existingProject, error: slugError } = await supabase
         .from('projects')
         .select('id')
@@ -86,6 +97,28 @@ const handlePATCH = async (req: NextApiRequest, res: NextApiResponse, supabase: 
 
       if (existingProject) {
         throw { status: 400, message: 'Project key already exists' } as TApiError
+      }
+
+      // If slug is changing, update all task slugs
+      const { data: tasks, error: tasksError } = await supabase
+        .from('tasks')
+        .select('id, slug')
+        .eq('project_id', projectId)
+
+      if (tasksError) {
+        throw { status: 400, message: tasksError.message } as TApiError
+      }
+
+      // Update each task's slug
+      for (const task of tasks) {
+        const { error: updateTaskError } = await supabase
+          .from('tasks')
+          .update({ slug: task.slug.replace(currentProject.slug, formData.slug) })
+          .eq('id', task.id)
+
+        if (updateTaskError) {
+          throw { status: 400, message: updateTaskError.message } as TApiError
+        }
       }
     }
 

@@ -25,12 +25,16 @@ export const useEditTask: TUseEditTask = () => {
       })) as TTask
     },
     onSuccess: async data => {
-      await queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ['tasks', projectId]
       })
 
-      await queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ['task']
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: ['sprints']
       })
 
       toast.success('Task edited')

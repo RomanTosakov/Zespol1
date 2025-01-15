@@ -35,13 +35,6 @@ export const useSidebarItems = () => {
       key: 'sprints',
       icon: <Clock />,
       isActive: lastPathname === 'sprints'
-    },
-    {
-      label: 'Kanban [WIP]',
-      href: `/projects/${projectSlug}/boards/kanban`,
-      key: 'kanban',
-      icon: <Columns />,
-      isActive: lastPathname === 'kanban'
     }
   ]
 

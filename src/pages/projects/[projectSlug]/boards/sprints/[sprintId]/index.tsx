@@ -1,160 +1,266 @@
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
-import { useGetProjectId } from '@/lib/hooks/useGetProjectId'
-import { useEditSprint } from '@/lib/utils/api/hooks/Sprints/useEditSprint'
 import { useSprint } from '@/lib/utils/api/hooks/Sprints/useSprint'
-import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
+import { TTask, TTaskStatus } from '@/lib/types/tasks'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
+import { useEditTask } from '@/lib/utils/api/hooks/Tasks/useEditTask'
+import { useState, useEffect, useCallback } from 'react'
+import { cn } from '@/lib/utils'
+import { Input } from '@/components/ui/input'
+import { useCreateTask } from '@/lib/utils/api/hooks/Tasks/useCreateTasks'
+import { LoaderCircle, Plus, PencilIcon, CheckCircleIcon } from 'lucide-react'
+import { toast } from 'sonner'
+import { useChangeOrder } from '@/lib/utils/api/hooks/Tasks/useChangeOrder'
+import { TaskCard } from '@/lib/views/tasks/components/TaskCard'
+import { Button } from '@/components/ui/button'
+import { SprintModal } from '@/lib/views/sprints/components/SprintModal'
+import NiceModal from '@ebay/nice-modal-react'
 
-export default function SprintDetailsPage() {
-  const router = useRouter()
-  const { sprintId } = router.query as { sprintId: string }
-  const projectId = useGetProjectId()
+type CreateTaskProps = {
+  status: TTaskStatus
+  sprintId: string
+}
 
-  const { sprint, isLoading } = useSprint(sprintId)
-  const { editSprint, isLoading: isEditing } = useEditSprint()
+const CreateTaskButton = ({ status, sprintId }: CreateTaskProps) => {
+  const [isCreating, setIsCreating] = useState(false)
+  const [title, setTitle] = useState('')
+  const createTask = useCreateTask()
 
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [startDate, setStartDate] = useState<Date>()
-  const [endDate, setEndDate] = useState<Date>()
-
-  useEffect(() => {
-    if (sprint) {
-      setName(sprint.name)
-      setDescription(sprint.description || '')
-      setStartDate(sprint.start_date ? new Date(sprint.start_date) : undefined)
-      setEndDate(sprint.end_date ? new Date(sprint.end_date) : undefined)
+  const handleToggle = (val: boolean) => {
+    setIsCreating(val)
+    if (val) {
+      setTitle('')
     }
-  }, [sprint])
-
-  const handleSave = () => {
-    editSprint({
-      formData: {
-        name,
-        description,
-        start_date: startDate?.toISOString() || null,
-        end_date: endDate?.toISOString() || null
-      },
-      id: sprintId
-    })
   }
 
-  if (!projectId) return null
+  const handleCreateTask = useCallback(() => {
+    const trimmedTitle = title.trim()
+    if (!trimmedTitle) {
+      toast.error('Task title cannot be empty')
+      return
+    }
+
+    createTask.mutate(
+      {
+        title: trimmedTitle,
+        status: status,
+        sprint_id: sprintId
+      },
+      {
+        onSuccess: () => {
+          setTitle('')
+          setIsCreating(false)
+        },
+        onError: error => {
+          toast.error(error instanceof Error ? error.message : 'Failed to create task')
+        }
+      }
+    )
+  }, [title, createTask])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleToggle(false)
+      }
+
+      if (e.key === 'Enter' && isCreating && !createTask.isPending) {
+        handleCreateTask()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleCreateTask, isCreating, createTask.isPending])
 
   return (
-    <div className='space-y-8 p-6'>
-      <div className='flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>Sprint Details</h1>
-        <Button onClick={handleSave} disabled={isEditing || !name}>
-          Save Changes
-        </Button>
+    <div
+      className='flex w-full cursor-pointer items-center gap-1 rounded-b-sm py-1 opacity-0 transition-all hover:bg-secondary hover:opacity-100 group-hover:opacity-100'
+      onClick={() => {
+        if (!isCreating) {
+          handleToggle(true)
+        }
+      }}
+    >
+      {createTask.isPending ? <LoaderCircle size={16} className='animate-spin' /> : <Plus size={16} />}
+      {isCreating ? (
+        <Input
+          autoFocus
+          onBlur={e => {
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+              handleToggle(false)
+            }
+          }}
+          value={title}
+          className='w-full border-none'
+          onChange={e => {
+            setTitle(e.target.value)
+          }}
+          placeholder='What needs to be done?'
+          disabled={createTask.isPending}
+        />
+      ) : (
+        <p className='select-none text-sm font-semibold'>Create</p>
+      )}
+    </div>
+  )
+}
+
+export default function Page() {
+  const router = useRouter()
+  const sprintId = router.query.sprintId as string
+  const { sprint } = useSprint(sprintId)
+  const { mutate: editTask } = useEditTask()
+  const { mutate: changeOrder } = useChangeOrder()
+
+  const [tasks, setTasks] = useState<TTask[]>(sprint?.tasks || [])
+
+  useEffect(() => {
+    setTasks(sprint?.tasks || [])
+  }, [sprint?.tasks])
+
+  const getTasksByStatus = (status: TTaskStatus) => {
+    return tasks.filter(task => task.status === status).sort((a, b) => a.sort_id - b.sort_id) || []
+  }
+
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination || !tasks) return
+
+    const sourceId = result.source.droppableId as TTaskStatus
+    const destinationId = result.destination.droppableId as TTaskStatus
+
+    const allTasks = [...tasks]
+    const sourceItems = getTasksByStatus(sourceId)
+    const destinationItems = sourceId === destinationId ? sourceItems : getTasksByStatus(destinationId)
+
+    const [movedTask] = sourceItems.splice(result.source.index, 1)
+
+    const updatedTask = { ...movedTask, status: destinationId }
+    destinationItems.splice(result.destination.index, 0, updatedTask)
+
+    const updatedTasks = allTasks.map(t => {
+      if (t.id === movedTask.id) {
+        return {
+          ...t,
+          status: destinationId,
+          sort_id: result.destination!.index
+        }
+      }
+      return t
+    })
+
+    setTasks(updatedTasks)
+
+    if (sourceId === destinationId) {
+      const tasksToUpdate = getTasksByStatus(sourceId).map((task, index) => ({
+        id: task.id,
+        sort_id: index
+      }))
+      changeOrder(tasksToUpdate)
+    } else {
+      editTask({
+        formData: {
+          ...movedTask,
+          status: destinationId,
+          sort_id: result.destination.index + 1
+        },
+        id: movedTask.id
+      })
+    }
+  }
+
+  const todoTasks = getTasksByStatus('todo')
+  const inProgressTasks = getTasksByStatus('in-progress')
+  const doneTasks = getTasksByStatus('done')
+
+  return (
+    <div className='p-6'>
+      <div className='mb-6 flex items-center gap-2'>
+        <h1 className='text-2xl font-bold'>{sprint?.name}</h1>
+        {!sprint?.is_completed ? (
+          <Button
+            variant='ghost'
+            size='icon'
+            className='h-8 w-8'
+            onClick={() => sprint && NiceModal.show(SprintModal, { initialSprint: sprint })}
+          >
+            <PencilIcon className='h-4 w-4' />
+          </Button>
+        ) : (
+          <Button variant='ghost' size='icon' className='h-8 w-8'>
+            <CheckCircleIcon className='h-4 w-4' />
+          </Button>
+        )}
       </div>
 
-      {isLoading ? (
-        <div className='space-y-4'>
-          <Skeleton className='h-8 w-1/3' />
-          <Skeleton className='h-32 w-full' />
-          <div className='flex gap-4'>
-            <Skeleton className='h-10 w-1/2' />
-            <Skeleton className='h-10 w-1/2' />
-          </div>
-        </div>
-      ) : (
-        <div className='space-y-6'>
-          <div className='space-y-2'>
-            <Label htmlFor='name'>Sprint Name</Label>
-            <Input id='name' value={name} onChange={e => setName(e.target.value)} />
-          </div>
-
-          <div className='space-y-2'>
-            <Label htmlFor='description'>Description</Label>
-            <Textarea
-              id='description'
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              className='min-h-[100px]'
-            />
-          </div>
-
-          <div className='flex gap-4'>
-            <div className='flex-1 space-y-2'>
-              <Label>Start Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant='outline'
-                    className={cn('w-full justify-start text-left font-normal', !startDate && 'text-muted-foreground')}
-                  >
-                    <CalendarIcon className='mr-2 h-4 w-4' />
-                    {startDate ? format(startDate, 'PPP') : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto p-0' align='start'>
-                  <Calendar mode='single' selected={startDate} onSelect={setStartDate} initialFocus />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className='flex-1 space-y-2'>
-              <Label>End Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant='outline'
-                    className={cn('w-full justify-start text-left font-normal', !endDate && 'text-muted-foreground')}
-                  >
-                    <CalendarIcon className='mr-2 h-4 w-4' />
-                    {endDate ? format(endDate, 'PPP') : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto p-0' align='start'>
-                  <Calendar
-                    mode='single'
-                    selected={endDate}
-                    onSelect={setEndDate}
-                    disabled={date => (startDate ? date < startDate : false)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-
-          <div className='space-y-4'>
-            <div className='flex items-center justify-between'>
-              <h2 className='text-xl font-semibold'>Tasks</h2>
-              <Button variant='outline'>Add Task</Button>
-            </div>
-
-            {sprint?.tasks?.length === 0 ? (
-              <div className='flex h-32 items-center justify-center rounded-md border border-dashed'>
-                <div className='text-center'>
-                  <h3 className='text-lg font-medium'>No tasks in this sprint</h3>
-                  <p className='text-sm text-muted-foreground'>Add tasks to get started</p>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className='grid grid-cols-3'>
+          <div className='group border border-r-0 bg-secondary-dimmed p-4'>
+            <h2 className='mb-4 font-semibold'>To Do ({todoTasks.length})</h2>
+            <Droppable droppableId='todo'>
+              {(provided, snapshot) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className={cn('mb-4 flex flex-col gap-4', snapshot.isDraggingOver && 'bg-muted/50')}
+                >
+                  {todoTasks.map((task: TTask, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                      {provided => <TaskCard task={task} provided={provided} />}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
                 </div>
-              </div>
-            ) : (
-              <div className='space-y-2'>
-                {sprint?.tasks?.map(task => (
-                  <div key={task.id} className='flex items-center justify-between rounded-md bg-secondary-dimmed p-4'>
-                    <span>{task.title}</span>
-                    <span className='text-sm text-muted-foreground'>{task.status}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+              )}
+            </Droppable>
+            <CreateTaskButton status='todo' sprintId={sprintId} />
+          </div>
+
+          <div className='group border border-r-0 bg-secondary-dimmed p-4'>
+            <h2 className='mb-4 font-semibold'>In Progress ({inProgressTasks.length})</h2>
+            <Droppable droppableId='in-progress'>
+              {(provided, snapshot) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className={cn('mb-4 flex flex-col gap-4', snapshot.isDraggingOver && 'bg-muted/50')}
+                >
+                  {inProgressTasks.map((task: TTask, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                      {provided => <TaskCard task={task} provided={provided} />}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+            <CreateTaskButton status='in-progress' sprintId={sprintId} />
+          </div>
+
+          <div className='group border bg-secondary-dimmed p-4'>
+            <h2 className='mb-4 font-semibold'>Done ({doneTasks.length})</h2>
+            <Droppable droppableId='done'>
+              {(provided, snapshot) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className={cn('mb-4 flex flex-col gap-4', snapshot.isDraggingOver && 'bg-muted/50')}
+                >
+                  {doneTasks.map((task: TTask, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                      {provided => <TaskCard task={task} provided={provided} />}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+            <CreateTaskButton status='done' sprintId={sprintId} />
           </div>
         </div>
-      )}
+      </DragDropContext>
     </div>
   )
 }

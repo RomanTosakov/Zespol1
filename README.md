@@ -3,12 +3,10 @@
 Welcome to our project management system! This guide will help you get started with setting up and running the project.
 
 ## 📋 Table of Contents
-- [Prerequisites](#prerequisites)
-- [Branch Structure](#branch-structure)
-- [Getting Started](#getting-started)
+- [quick start](docs/quick-start.md)
+- [Branch Structure](docs/user-guide.md)
 - [Project Structure](docs/project-structure.md)
-- [Features](#features)
-- [Navigation Guide](#navigation-guide)
+
 
 ## 🛠 Prerequisites
 

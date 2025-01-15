@@ -14,6 +14,7 @@ import { useUpdateProject } from '@/lib/utils/api/hooks/useUpdateProject'
 import { useProjectTeam } from '@/lib/utils/api/hooks/Team/useProjectTeam'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { generateSlug } from '@/lib/utils/api/generateSlug'
+import { useRouter } from 'next/router'
 
 type TProjectDetailsForm = {
   name: string
@@ -22,6 +23,7 @@ type TProjectDetailsForm = {
 }
 
 export const DetailsView = () => {
+  const router = useRouter()
   const projectId = useGetProjectId()
   const { data: project, isLoading } = useGetProject()
   const { data: user } = useUser()
@@ -44,7 +46,7 @@ export const DetailsView = () => {
     if (project) {
       formMethods.reset({
         name: project.name,
-        slug: project.slug,
+        slug: project.slug.toUpperCase(),
         primary_owner: project.primary_owner
       })
     }
@@ -53,15 +55,20 @@ export const DetailsView = () => {
   const onSubmit = (data: TProjectDetailsForm) => {
     if (!project) return
 
+    const newSlug = generateSlug(data.slug).toUpperCase().slice(0, 10)
+    const oldSlug = project.slug
     updateProject.mutate(
       {
         ...project,
         ...data,
-        slug: generateSlug(data.slug)
+        slug: newSlug
       },
       {
         onSuccess: () => {
           setIsEditing(false)
+          if (oldSlug !== newSlug) {
+            router.push(`/projects/${newSlug}/settings/details`)
+          }
         }
       }
     )
@@ -120,7 +127,13 @@ export const DetailsView = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Project Key</FormLabel>
-                  <Input {...field} disabled={!isEditing} />
+                  <Input 
+                    {...field} 
+                    disabled={!isEditing}
+                    maxLength={10}
+                    value={field.value.toUpperCase()}
+                    onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                  />
                   <FormMessage />
                 </FormItem>
               )}

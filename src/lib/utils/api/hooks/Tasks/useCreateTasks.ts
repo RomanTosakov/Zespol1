@@ -21,6 +21,10 @@ export const useCreateTask: TUseCreateTask = () => {
         queryKey: ['tasks', projectId]
       })
 
+      await queryClient.invalidateQueries({
+        queryKey: ['sprints', projectId]
+      })
+
       toast.success('Task created')
     },
 

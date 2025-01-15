@@ -69,7 +69,6 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
           ...formData,
           project_id: projectId,
           sort_id: nextTaskNumber,
-          status: 'todo',
           slug: `${project.slug}-${nextTaskNumber}`
         }
       ])

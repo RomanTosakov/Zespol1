@@ -19,6 +19,8 @@ export type TTaskStatus = 'todo' | 'in-progress' | 'done'
 
 export type TTaskForm = {
   title: string
+  sprint_id?: string
+  status?: TTaskStatus
 }
 
 export type TTaskOrderChange = {

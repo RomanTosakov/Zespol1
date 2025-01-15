@@ -20,6 +20,7 @@ import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { TaskFilesButton } from './TaskFilesButton'
 import { TaskFiles } from './TaskFiles'
 import dayjs from 'dayjs'
+import { TaskSprintSelect } from './TaskSprintSelect'
 
 type TaskModalProps = {
   initialTask: TTask
@@ -93,6 +94,7 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
               <div className='flex items-center gap-4'>
                 <StatusChip task={task} />
                 <TaskMemberSelect task={task} />
+                <TaskSprintSelect task={task} />
                 {task?.created_at && (
                   <span className='text-sm text-muted-foreground'>
                     Created on {format(new Date(task.created_at), 'MMM d, yyyy')}

@@ -17,7 +17,10 @@ const capitalizeFirstLetter = (string: string) => {
 export const Breadcrumbs: React.FC = () => {
   const router = useRouter()
 
-  const splittedPath = router.asPath.split('/').filter(Boolean)
+  const splittedPath = router.asPath
+    .split('/')
+    .filter(Boolean)
+    .filter(path => path.length < 30)
   const slicedPath = splittedPath.length > 1 ? splittedPath.slice(1) : splittedPath
 
   return (

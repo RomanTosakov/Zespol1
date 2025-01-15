@@ -29,15 +29,23 @@ export const useCreateInvite: TUseCreateInvite = () => {
       queryClient.invalidateQueries({
         queryKey: ['invites', projectId]
       })
-    const project =  queryClient.invalidateQueries({
-      queryKey: ['projects', projectId]
-    })
+      queryClient.invalidateQueries({
+        queryKey: ['projects', projectId]
+      })
+
+      if (!inviter) {
+        toast.error('Failed to get inviter information')
+        return
+      }
+
       try {
         await axios.post('/send', {
           email: form.email,
           projectId: projectId,
-          inviter: inviter,
-          
+          inviter: {
+            name: inviter.name || 'Team Member',
+            email: inviter.email
+          }
         }, {
           headers: {
             'Content-Type': 'application/json'

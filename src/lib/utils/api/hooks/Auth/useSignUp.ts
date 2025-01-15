@@ -15,7 +15,9 @@ export const useSignUp: TUseSignUp = () => {
       })
     },
     onSuccess: () => {
-      router.push('/projects')
+      if (!router.query.inviteId) {
+        router.push('/projects')
+      }
     },
     onError: error => {}
   })

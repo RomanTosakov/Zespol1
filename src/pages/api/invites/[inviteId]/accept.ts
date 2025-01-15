@@ -25,49 +25,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TSupabaseClient) => {
   try {
-    const { data: user, error: userError } = await supabase.auth.getUser()
     const { inviteId } = req.query as { inviteId: string }
-    if (userError) {
-      const errorData: TApiError = {
-        message: userError.message,
-        status: 400
-      }
+    const { token } = req.query as { token: string }
 
-      throw errorData
-    }
-
-    if (!user || !user.user.email) {
-      const errorData: TApiError = {
-        message: 'User not found',
-        status: 404
-      }
-
-      throw errorData
-    }
-
-    const { data, error } = await supabase
+    // First, validate the invitation and token before checking user auth
+    const { data: invitation, error: inviteError } = await supabase
       .from('invitations')
       .select('*, project:projects(*)')
-      .eq('email', user.user.email)
       .eq('id', inviteId)
+      .eq('token', token)
       .maybeSingle()
 
-    if (error) {
-      const errorData: TApiError = {
-        message: error.message,
-        status: 400
-      }
-
-      throw errorData
+    if (inviteError || !invitation) {
+      return res.redirect(302, '/auth?error=invalid_invite')
     }
 
-    if (!data) {
-      const errorData: TApiError = {
-        message: 'Invite not found',
-        status: 404
-      }
+    // Now check user authentication
+    const { data: user, error: userError } = await supabase.auth.getUser()
+    
+    if (userError || !user || !user.user?.email) {
+      // Store invite data in query params to restore after auth
+      const queryParams = new URLSearchParams({
+        inviteId,
+        token,
+        email: invitation.email,
+        redirect: 'true'
+      })
+      return res.redirect(302, `/auth?${queryParams.toString()}`)
+    }
 
-      throw errorData
+    // Verify the invite is for this user
+    if (user.user.email.toLowerCase() !== invitation.email.toLowerCase()) {
+      return res.redirect(302, '/auth?error=email_mismatch')
     }
 
     const { data: userProfile, error: profileError } = await supabase
@@ -76,57 +65,31 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
       .eq('id', user.user.id)
       .single()
 
-    if (profileError) {
-      const errorData: TApiError = {
-        message: profileError.message,
-        status: 400
-      }
-
-      throw errorData
-    }
-
-    if (!userProfile) {
-      const errorData: TApiError = {
-        message: 'Profile not found',
-        status: 400
-      }
-
-      throw errorData
+    if (profileError || !userProfile) {
+      return res.redirect(302, '/auth?error=profile_not_found')
     }
 
     const { data: insertMember, error: insertMemberError } = await supabase.from('project_members').insert({
-      project_id: data.project_id,
+      project_id: invitation.project_id,
       profile_id: user.user.id,
       name: userProfile.name ?? '',
-      role: data.role,
+      role: invitation.role,
       email: user.user.email
     })
 
     if (insertMemberError) {
-      const errorData: TApiError = {
-        message: insertMemberError.message,
-        status: 400
-      }
-
-      throw errorData
+      return res.redirect(302, `/auth?error=member_insert_failed`)
     }
 
     const { error: deleteError } = await supabase.from('invitations').delete().eq('id', inviteId)
 
     if (deleteError) {
-      const errorData: TApiError = {
-        message: deleteError.message,
-        status: 400
-      }
-
-      throw errorData
+      return res.redirect(302, `/auth?error=invite_delete_failed`)
     }
-    //res.status(200).json({ data })
     
-    res.redirect(302, `/projects/${data.project_id}`);
+    res.redirect(302, `/projects/${invitation.project_id}`)
   } catch (error) {
-    const errorData = error as TApiError
-
-    return res.status(errorData.status).json({ error: errorData.message })
+    console.error('Error processing invite acceptance:', error)
+    return res.redirect(302, '/auth?error=server_error')
   }
 }

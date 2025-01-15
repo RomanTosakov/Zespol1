@@ -14,7 +14,7 @@ Welcome to our project management system! This guide will help you get started w
 
 Before you begin, make sure you have the following installed on your computer:
 - [Node.js](https://nodejs.org/) (version 16 or higher)
-- [npm](https://www.npmjs.com/) (comes with Node.js)
+- [Yarn](https://yarnpkg.com/) (preferred package manager)
 - [Git](https://git-scm.com/) for cloning the repository
 
 ## 🌳 Branch Structure
@@ -51,7 +51,7 @@ cd Zespol1-1
 
 ### 2. Install Dependencies
 ```bash
-npm install
+yarn install
 ```
 
 ### 3. Set Up Environment Variables
@@ -66,7 +66,7 @@ BASE_URL=http://localhost:3000/
 
 ### 4. Start the Development Server
 ```bash
-npm run dev
+yarn dev
 ```
 
 The application will be available at `http://localhost:3000`

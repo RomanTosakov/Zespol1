@@ -46,9 +46,32 @@ const checkSlug = async (slug: string, supabase: TSupabaseClient) => {
 }
 
 const generateProjectSlug = async (name: string, supabase: TSupabaseClient): Promise<string> => {
-  const slug = generateSlug(name)
+  const words = name.split(/\s+/).slice(0, 10); 
+  const initialKey = words
+    .map(word => {
+      const validChar = word.charAt(0).toUpperCase().replace(/[^A-Z0-9]/g, '');
+      return validChar || '';
+    })
+    .join('');
 
-  return (await checkSlug(slug, supabase)) ? generateProjectSlug(name + randomInt(100), supabase) : slug
+  if (!initialKey) {
+    return 'PROJ';
+  }
+
+  const baseKey = initialKey.slice(0, 10);
+
+  const exists = await checkSlug(baseKey, supabase);
+  if (!exists) return baseKey;
+
+  let counter = 1;
+  while (counter <= 999) {
+    const newKey = `${baseKey}${counter}`; 
+    const exists = await checkSlug(newKey, supabase);
+    if (!exists) return newKey;
+    counter++;
+  }
+
+  return `${baseKey}${randomInt(1000, 9999)}`;
 }
 
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: TSupabaseClient) => {

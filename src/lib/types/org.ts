@@ -7,3 +7,5 @@ export type TOrgForm = {
 export type TProjectMember = Database['public']['Tables']['project_members']['Row']
 
 export type TProject = Database['public']['Tables']['projects']['Row']
+
+export type TProjectRole = 'member' | 'administrator' | 'owner' | 'manager'

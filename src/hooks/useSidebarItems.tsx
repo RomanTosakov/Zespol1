@@ -1,4 +1,4 @@
-import { Clock, Columns, List, User, Wrench } from 'lucide-react'
+import { Clock, Columns, List, Settings, User, Wrench } from 'lucide-react'
 import { useRouter } from 'next/router'
 
 export type TBoardsSidebarItem = {
@@ -47,11 +47,18 @@ export const useSidebarItems = () => {
 
   const settingsItems: TBoardsSidebarItem[] = [
     {
-      label: 'General [WIP]',
-      href: `/projects/${projectSlug}/settings/general`,
-      key: 'general',
-      icon: <Wrench />,
-      isActive: lastPathname === 'general'
+      label: 'Details',
+      href: `/projects/${projectSlug}/settings/details`,
+      key: 'details',
+      icon: <Settings />,
+      isActive: lastPathname === 'details'
+    },
+    {
+      label: 'Access',
+      href: `/projects/${projectSlug}/settings/access`,
+      key: 'access',
+      icon: <Settings />,
+      isActive: lastPathname === 'access'
     },
     {
       label: 'Team',

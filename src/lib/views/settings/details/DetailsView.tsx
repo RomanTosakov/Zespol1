@@ -182,7 +182,7 @@ export const DetailsView = () => {
                     if (project) {
                       formMethods.reset({
                         name: project.name,
-                        slug: project.slug,
+                        slug: project.slug.toUpperCase(),
                         primary_owner: project.primary_owner
                       })
                     }
@@ -200,4 +200,4 @@ export const DetailsView = () => {
       </Card>
     </div>
   )
-} 
+}

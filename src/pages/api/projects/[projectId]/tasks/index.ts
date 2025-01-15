@@ -33,19 +33,33 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
     const { projectId } = req.query as { projectId: string }
     const formData = req.body.formData as TTaskForm
 
-    const {
-      data: tasksCount,
-      count,
-      error: countError
-    } = await supabase.from('tasks').select('id', { count: 'exact' }).eq('project_id', projectId)
+    const { data: project, error: projectError } = await supabase
+      .from('projects')
+      .select('slug')
+      .eq('id', projectId)
+      .single()
 
-    if (countError) {
+    if (projectError) {
       const errorApi = {
         status: 400,
-        message: countError.message
+        message: projectError.message
       } as TApiError
-
       throw errorApi
+    }
+
+    // Get the highest task number for this project
+    const { data: maxTask } = await supabase
+      .from('tasks')
+      .select('slug')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    let nextTaskNumber = 1
+    if (maxTask) {
+      const lastNumber = parseInt(maxTask.slug.split('-')[1])
+      nextTaskNumber = lastNumber + 1
     }
 
     const { data, error } = await supabase
@@ -54,9 +68,9 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
         {
           ...formData,
           project_id: projectId,
-          sort_id: (count ?? 0) + 1,
+          sort_id: nextTaskNumber,
           status: 'todo',
-          slug: `KAN-${(count ?? 0) + 1}`
+          slug: `${project.slug}-${nextTaskNumber}`
         }
       ])
       .select('*')

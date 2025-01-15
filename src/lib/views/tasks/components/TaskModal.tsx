@@ -64,7 +64,16 @@ export const TaskModal = NiceModal.create<TaskModalProps>(({ initialTask }) => {
     <Dialog open={modal.visible} onOpenChange={() => modal.hide()}>
       <DialogContent className='max-w-2xl'>
         <DialogHeader className='flex flex-row items-start justify-between pt-6'>
-          <div className='flex-1'>{isLoading ? <Skeleton className='h-7 w-3/4' /> : <EditableTitle task={task} />}</div>
+          <div className='flex-1'>
+            {isLoading ? (
+              <Skeleton className='h-7 w-3/4' />
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">{task?.slug}</span>
+                <EditableTitle task={task} />
+              </div>
+            )}
+          </div>
           <Button variant='ghost' size='icon' className='h-8 w-8' onClick={handleDelete}>
             <Trash2Icon className='h-4 w-4 text-muted-foreground hover:text-destructive' />
           </Button>

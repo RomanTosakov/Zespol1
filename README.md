@@ -44,8 +44,8 @@ git checkout -b bugfix/bug-description
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/Zespol1-1.git
-cd Zespol1-1
+git clone https://github.com/RomanTosakov/Zespol1
+cd Zespol1
 ```
 
 ### 2. Install Dependencies

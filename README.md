@@ -14,6 +14,7 @@ Before you begin, make sure you have the following installed on your computer:
 - [Node.js](https://nodejs.org/) (version 16 or higher)
 - [Yarn](https://yarnpkg.com/) (preferred package manager)
 - [Git](https://git-scm.com/) for cloning the repository
+- [Docker](https://www.docker.com/) for local database
 
 ## 🌳 Branch Structure
 
@@ -43,8 +44,8 @@ git checkout -b bugfix/bug-description
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/Zespol1-1.git
-cd Zespol1-1
+git clone https://github.com/RomanTosakov/Zespol1
+cd Zespol1
 ```
 
 ### 2. Install Dependencies
@@ -52,16 +53,12 @@ cd Zespol1-1
 yarn install
 ```
 
-### 3. Set Up Environment Variables
-Create a `.env` file in the root directory and add the following variables:
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_JWT_SECRET=your_jwt_secret
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-BASE_URL=http://localhost:3000/
+### 3. Set Up local database
+[install supabase cli](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=windows#installing-the-supabase-cli)
+then run 
+``` bash
+supabase start
 ```
-
 ### 4. Start the Development Server
 ```bash
 yarn dev

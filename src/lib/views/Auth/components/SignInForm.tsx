@@ -13,9 +13,13 @@ import { useForm } from 'react-hook-form'
 type TProps = {
   setAuthStep: (step: TAuthSteps) => void
   email: string
+  inviteParams?: {
+    inviteId: string
+    token: string
+  }
 }
 
-export const SignInForm: React.FC<TProps> = ({ setAuthStep, email }) => {
+export const SignInForm: React.FC<TProps> = ({ setAuthStep, email, inviteParams }) => {
   const formMethods = useForm<TSignInForm>({
     defaultValues: {
       password: '',
@@ -28,7 +32,13 @@ export const SignInForm: React.FC<TProps> = ({ setAuthStep, email }) => {
   const signIn = useSignIn()
 
   const onSubmit = (data: TSignInForm) => {
-    signIn.mutate(data)
+    signIn.mutate(data, {
+      onSuccess: () => {
+        if (inviteParams) {
+          window.location.href = `/api/invites/${inviteParams.inviteId}/accept?token=${inviteParams.token}`
+        }
+      }
+    })
   }
 
   return (

@@ -13,9 +13,13 @@ import { ArrowLeft } from 'lucide-react'
 type TProps = {
   setAuthStep: (step: TAuthSteps) => void
   email: string
+  inviteParams?: {
+    inviteId: string
+    token: string
+  }
 }
 
-export const SignUpForm: React.FC<TProps> = ({ setAuthStep, email }) => {
+export const SignUpForm: React.FC<TProps> = ({ setAuthStep, email, inviteParams }) => {
   const formMethods = useForm<TSignUpForm>({
     defaultValues: {
       full_name: '',
@@ -29,7 +33,13 @@ export const SignUpForm: React.FC<TProps> = ({ setAuthStep, email }) => {
   const signUp = useSignUp()
 
   const onSubmit = (data: TSignUpForm) => {
-    signUp.mutate(data)
+    signUp.mutate(data, {
+      onSuccess: () => {
+        if (inviteParams) {
+          window.location.href = `/api/invites/${inviteParams.inviteId}/accept?token=${inviteParams.token}`
+        }
+      }
+    })
   }
 
   return (

@@ -14,8 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const supabase = createServerSupabase(req, res);
   const { email, projectId, inviter } = req.body;
 
-  try {
+  if (!email || !projectId || !inviter) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
 
+  try {
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('name')
@@ -32,10 +35,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('email', email)
       .single();
 
-    if (profileError || !profile) {
-      return res.status(404).json({ error: 'User profile not found' });
-    }
-
+    // Don't fail if profile not found, use a default name
+    const recipientName = profile?.name ?? 'Guest';
     
     const { data: invitation, error: invitationError } = await supabase
       .from('invitations')
@@ -48,31 +49,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'Invitation not found' });
     }
 
-    const { data, error: emailError } = await resend.emails.send({
-      from: 'Jira like team <noreply@tosakov.com>',
-      to: [email],
-      subject: `${inviter.name} invited you to ${project.name}`,
-      react: EmailTemplate({
-        firstName: profile.name ?? 'Guest',
-        inviterName: inviter.name,
-        projectName: project.name,
-        role: invitation.role,
-        inviteDate: invitation.created_at,
-        token: invitation.token,
-        inviteId: invitation.id,
-       
-      }),
-    });
-    console.log('Invitation Data:', invitation);
-    console.log('Profile Data:', profile);
-    if (emailError) {
-      throw new Error(`Failed to send email: ${emailError.message}`);
-    }
+    try {
+      const { data: emailResult, error: emailError } = await resend.emails.send({
+        from: 'Jira like team <noreply@tosakov.com>',
+        to: [email],
+        subject: `${inviter.name} invited you to ${project.name}`,
+        react: EmailTemplate({
+          firstName: recipientName,
+          inviterName: inviter.name,
+          projectName: project.name,
+          role: invitation.role,
+          inviteDate: invitation.created_at,
+          token: invitation.token,
+          inviteId: invitation.id,
+        }),
+      });
 
-    // Успешный ответ
-    return res.status(200).json({ message: 'Email sent successfully', data });
+      if (emailError) {
+        console.error('Resend API error:', emailError);
+        throw new Error(`Failed to send email: ${emailError.message}`);
+      }
+
+      return res.status(200).json({ 
+        message: 'Email sent successfully', 
+        data: emailResult 
+      });
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      throw new Error('Failed to send email through Resend API');
+    }
   } catch (error) {
     console.error('Error processing request:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ 
+      error: error instanceof Error ? error.message : 'Internal Server Error' 
+    });
   }
 }

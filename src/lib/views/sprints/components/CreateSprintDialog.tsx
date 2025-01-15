@@ -27,7 +27,8 @@ export const CreateSprintDialog = NiceModal.create(() => {
         name,
         description,
         start_date: startDate?.toISOString() || null,
-        end_date: endDate?.toISOString() || null
+        end_date: endDate?.toISOString() || null,
+        is_completed: false
       },
       {
         onSuccess: () => {

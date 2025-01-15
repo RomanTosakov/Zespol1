@@ -12,4 +12,5 @@ export type TSprintForm = {
   description: string | null
   start_date: string | null
   end_date: string | null
+  is_completed: boolean
 }

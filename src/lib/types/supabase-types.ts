@@ -164,6 +164,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           id: string
+          is_completed: boolean
           name: string
           project_id: string
           start_date: string | null
@@ -173,6 +174,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
+          is_completed?: boolean
           name: string
           project_id: string
           start_date?: string | null
@@ -182,6 +184,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
+          is_completed?: boolean
           name?: string
           project_id?: string
           start_date?: string | null

@@ -7,10 +7,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { useCreateTask } from '@/lib/utils/api/hooks/Tasks/useCreateTasks'
-import { LoaderCircle, Plus } from 'lucide-react'
+import { LoaderCircle, Plus, PencilIcon, CheckCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useChangeOrder } from '@/lib/utils/api/hooks/Tasks/useChangeOrder'
 import { TaskCard } from '@/lib/views/tasks/components/TaskCard'
+import { Button } from '@/components/ui/button'
+import { SprintModal } from '@/lib/views/sprints/components/SprintModal'
+import NiceModal from '@ebay/nice-modal-react'
 
 type CreateTaskProps = {
   status: TTaskStatus
@@ -174,7 +177,23 @@ export default function Page() {
 
   return (
     <div className='p-6'>
-      <h1 className='mb-6 text-2xl font-bold'>{sprint?.name}</h1>
+      <div className='mb-6 flex items-center gap-2'>
+        <h1 className='text-2xl font-bold'>{sprint?.name}</h1>
+        {!sprint?.is_completed ? (
+          <Button
+            variant='ghost'
+            size='icon'
+            className='h-8 w-8'
+            onClick={() => sprint && NiceModal.show(SprintModal, { initialSprint: sprint })}
+          >
+            <PencilIcon className='h-4 w-4' />
+          </Button>
+        ) : (
+          <Button variant='ghost' size='icon' className='h-8 w-8'>
+            <CheckCircleIcon className='h-4 w-4' />
+          </Button>
+        )}
+      </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className='grid grid-cols-3'>

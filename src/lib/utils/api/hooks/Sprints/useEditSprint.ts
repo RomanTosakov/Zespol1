@@ -2,6 +2,7 @@ import { useGetProjectId } from '@/lib/hooks/useGetProjectId'
 import { TSprintForm, TSprintWithTasks } from '@/lib/types/sprints'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { axios } from '../../axios'
+import { toast } from 'sonner'
 
 type TEditSprintParams = {
   formData: TSprintForm
@@ -23,9 +24,10 @@ export const useEditSprint = () => {
       })
       return data
     },
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
-      queryClient.invalidateQueries({ queryKey: ['sprints', projectId, id] })
+    onSuccess: async (_, { id }) => {
+      await queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
+
+      toast.success('Sprint updated successfully')
     }
   })
 

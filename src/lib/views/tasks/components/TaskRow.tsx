@@ -18,7 +18,10 @@ export const TaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
     >
       <div className='flex items-center gap-2'>
         <GripVerticalIcon className='text-muted-foreground' />
-        <EditableTitle task={task} />
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">{task.slug}</span>
+          <EditableTitle task={task} />
+        </div>
       </div>
       <div className='flex items-center gap-4'>
         {task.due_date && (

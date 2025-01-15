@@ -10,6 +10,17 @@ const isCurrentPathInMixedUrls = (req: NextRequest) => {
   return req.nextUrl.pathname.startsWith('/accept-invite') || req.nextUrl.pathname.startsWith('/logout')
 }
 
+const isProjectPath = (pathname: string) => {
+  const projectPathRegex = /^\/projects\/([^\/]+)/
+  return projectPathRegex.test(pathname)
+}
+
+const getProjectSlug = (pathname: string) => {
+  const projectPathRegex = /^\/projects\/([^\/]+)/
+  const match = pathname.match(projectPathRegex)
+  return match ? match[1] : null
+}
+
 export async function middleware(req: NextRequest, res: NextResponse) {
   try {
     const { pathname } = req.nextUrl
@@ -71,6 +82,44 @@ export async function middleware(req: NextRequest, res: NextResponse) {
       redirectUrl.pathname = '/projects'
 
       return NextResponse.redirect(redirectUrl)
+    }
+
+    // Check project access if it's a project path
+    if (sessionExist && isProjectPath(pathname)) {
+      const projectSlug = getProjectSlug(pathname)
+      
+      // Skip access check for dashboard and create pages
+      if (projectSlug === 'dashboard' || projectSlug === 'create') {
+        return supabaseResponse
+      }
+
+      // Get project ID
+      const { data: project } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('slug', projectSlug)
+        .maybeSingle()
+
+      if (!project) {
+        const redirectUrl = req.nextUrl.clone()
+        redirectUrl.pathname = '/projects/dashboard'
+        return NextResponse.redirect(redirectUrl)
+      }
+
+      // Check if user is a member of the project
+      const { data: member } = await supabase
+        .from('project_members')
+        .select('id')
+        .eq('project_id', project.id)
+        .eq('profile_id', user?.id)
+        .is('deleted_at', null)
+        .maybeSingle()
+
+      if (!member) {
+        const redirectUrl = req.nextUrl.clone()
+        redirectUrl.pathname = '/projects/dashboard'
+        return NextResponse.redirect(redirectUrl)
+      }
     }
 
     const url = req.nextUrl

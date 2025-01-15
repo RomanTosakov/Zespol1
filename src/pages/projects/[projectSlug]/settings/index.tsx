@@ -1,3 +1,4 @@
+import React from 'react'
 import { GetServerSidePropsContext } from 'next'
 
 const Page = () => {
@@ -15,4 +16,6 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   }
 }
 
-export default Page
+
+export default Page 
+

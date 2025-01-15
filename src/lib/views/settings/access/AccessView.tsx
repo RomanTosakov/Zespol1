@@ -14,16 +14,18 @@ export const AccessView = () => {
 
       <Card className='w-full'>
         <div className='flex w-full flex-col'>
-          <div className='grid grid-cols-3 gap-4 border-b p-4 font-medium'>
+          <div className='grid grid-cols-4 gap-4 border-b p-4 font-medium'>
             <div>Name</div>
             <div>Email</div>
             <div>Role</div>
+            <div className='text-right'>Actions</div>
           </div>
 
           {isLoading ? (
             <div className='flex flex-col gap-4 p-4'>
               {[...Array(5)].map((_, i) => (
-                <div key={i} className='grid grid-cols-3 gap-4'>
+                <div key={i} className='grid grid-cols-4 gap-4'>
+                  <Skeleton className='h-8 w-full' />
                   <Skeleton className='h-8 w-full' />
                   <Skeleton className='h-8 w-full' />
                   <Skeleton className='h-8 w-full' />

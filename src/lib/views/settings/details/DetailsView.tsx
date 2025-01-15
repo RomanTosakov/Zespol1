@@ -131,6 +131,7 @@ export const DetailsView = () => {
                     {...field} 
                     disabled={!isEditing}
                     maxLength={10}
+                    value={field.value.toUpperCase()}
                     onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                   />
                   <FormMessage />

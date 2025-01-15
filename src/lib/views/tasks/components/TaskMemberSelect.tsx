@@ -3,6 +3,7 @@ import { useProjectTeam } from '@/lib/utils/api/hooks/Team/useProjectTeam'
 import { useEditTask } from '@/lib/utils/api/hooks/Tasks/useEditTask'
 import { TTask } from '@/lib/types/tasks'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useCurrentMemberRole } from '@/lib/utils/api/hooks/Team/useCurrentMemberRole'
 
 type TaskMemberSelectProps = {
   task: TTask
@@ -11,8 +12,11 @@ type TaskMemberSelectProps = {
 export const TaskMemberSelect: React.FC<TaskMemberSelectProps> = ({ task }) => {
   const { data: members, isLoading } = useProjectTeam()
   const editTask = useEditTask()
+  const { data: currentRole, isLoading: isLoadingRole } = useCurrentMemberRole()
 
-  if (isLoading) {
+  const canAssignTasks = currentRole === 'owner' || currentRole === 'administrator'
+
+  if (isLoading || isLoadingRole) {
     return <Skeleton className='h-8 w-[150px]' />
   }
 
@@ -20,6 +24,7 @@ export const TaskMemberSelect: React.FC<TaskMemberSelectProps> = ({ task }) => {
     <Select
       value={task.member_id || ''}
       onValueChange={value => {
+        if (!canAssignTasks) return
         editTask.mutate({
           id: task.id,
           formData: {
@@ -28,6 +33,7 @@ export const TaskMemberSelect: React.FC<TaskMemberSelectProps> = ({ task }) => {
           }
         })
       }}
+      disabled={!canAssignTasks}
     >
       <SelectTrigger className='w-[150px]'>
         <SelectValue placeholder='Assign member' />

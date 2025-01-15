@@ -70,8 +70,8 @@
 ### Project Views
 - **Backlog**: All project tasks
 - **Sprints**: Active and planned sprints
-- **Board**: Kanban-style task management
-- **Settings**: Project configuration
+- **Details**: Project configuration
+- **Access**: Team members and their roles
 
 ## Task Management
 

@@ -8,8 +8,11 @@
 3. Fill in your name and password
 4. Verify your email (check inbox)
 if user not exists 
+
 ![Sign Up](screens/sign_up.png)    
+
 if user exists
+
 ![Sign In](screens/sign_in.png)    
 
 ### 2. Create Your First Project

@@ -54,6 +54,13 @@ export const useSidebarItems = () => {
       isActive: lastPathname === 'details'
     },
     {
+      label: 'Access',
+      href: `/projects/${projectSlug}/settings/access`,
+      key: 'access',
+      icon: <Settings />,
+      isActive: lastPathname === 'access'
+    },
+    {
       label: 'Team',
       href: `/projects/${projectSlug}/team`,
       key: 'members',

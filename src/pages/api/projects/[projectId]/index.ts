@@ -49,11 +49,22 @@ const handlePATCH = async (req: NextApiRequest, res: NextApiResponse, supabase: 
     const { projectId } = req.query as { projectId: string }
     const formData = req.body.formData as TProject
 
+    // Get current user's session
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      throw { status: 401, message: 'Unauthorized' } as TApiError
+    }
+
     // Check if user has permission
     const { data: memberData, error: memberError } = await supabase
       .from('project_members')
       .select('role')
       .eq('project_id', projectId)
+      .eq('profile_id', user.id)
       .single()
 
     if (memberError || !memberData) {

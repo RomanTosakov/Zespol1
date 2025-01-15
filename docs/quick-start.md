@@ -9,7 +9,7 @@
 4. Verify your email (check inbox)
 if user not exists 
 
-![Sign Up](screens/sign_up.png)    
+![Sign Up](screens/sign_up1.png)    
 
 if user exists
 

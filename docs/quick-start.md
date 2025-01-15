@@ -8,7 +8,7 @@
 3. Fill in your name and password
 4. Verify your email (check inbox)
 
-![Sign Up](docs/screeens/sign_up.png)    
+![Sign Up](screens/sign_up.png)    
 
 ### 2. Create Your First Project
 1. Click "New Project" on dashboard

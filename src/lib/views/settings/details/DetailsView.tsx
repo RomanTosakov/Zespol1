@@ -15,6 +15,18 @@ import { useProjectTeam } from '@/lib/utils/api/hooks/Team/useProjectTeam'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { generateSlug } from '@/lib/utils/api/generateSlug'
 import { useRouter } from 'next/router'
+import { useDeleteProject } from '@/lib/utils/api/hooks/useDeleteProject'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type TProjectDetailsForm = {
   name: string
@@ -30,6 +42,7 @@ export const DetailsView = () => {
   const { data: role } = useCurrentMemberRole()
   const { data: members } = useProjectTeam()
   const updateProject = useUpdateProject()
+  const deleteProject = useDeleteProject()
   const [isEditing, setIsEditing] = useState(false)
 
   const canEdit = ['administrator', 'owner'].includes(role || '')
@@ -198,6 +211,42 @@ export const DetailsView = () => {
           </form>
         </Form>
       </Card>
+
+      {canEdit && (
+
+            <div className='flex items-center justify-between rounded-lg border border-destructive p-4'>
+              <div>
+                <h3 className='font-medium'>Delete Project</h3>
+                <p className='text-sm text-muted-foreground'>
+                  Once you delete a project, there is no going back. Please be certain.
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">Delete Project</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the project
+                      and all associated data including tasks, files, and team members.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={() => deleteProject.mutate()}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {deleteProject.isPending ? "Deleting..." : "Delete Project"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+
+      )}
     </div>
   )
 }

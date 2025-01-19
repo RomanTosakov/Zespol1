@@ -19,7 +19,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   token,
   inviteId
 }) => {
-  const acceptLink = `http://localhost:3000/api/invites/${inviteId}/accept?token=${token}`;
+  const acceptLink = `https://tosakov.com/api/invites/${inviteId}/accept?token=${token}`;
 
   return  (
   <div style={styles.container}>

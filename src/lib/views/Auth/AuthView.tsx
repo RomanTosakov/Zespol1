@@ -9,14 +9,18 @@ export const AuthView = () => {
   const [step, setStep] = useState<TAuthSteps>('enter-email')
   const [email, setEmail] = useState<string | null>(null)
   const router = useRouter()
-  const { inviteId, token, email: inviteEmail, redirect } = router.query
+  const { inviteId, token, email: inviteEmail, redirect, authStep } = router.query
 
   useEffect(() => {
     if (inviteEmail && typeof inviteEmail === 'string') {
       setEmail(inviteEmail)
-      setStep('register')
+      if (authStep === 'sign-in') {
+        setStep('login')
+      } else if (authStep === 'sign-up') {
+        setStep('register')
+      }
     }
-  }, [inviteEmail])
+  }, [inviteEmail, authStep])
 
   return (
     <div className='flex h-full items-center justify-center'>

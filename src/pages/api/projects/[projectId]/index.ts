@@ -13,8 +13,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return await handleGET(req, res, supabase)
       case 'PATCH':
         return await handlePATCH(req, res, supabase)
+      case 'DELETE':
+        return await handleDELETE(req, res, supabase)
       default:
-        res.setHeader('Allow', ['GET', 'PATCH'])
+        res.setHeader('Allow', ['GET', 'PATCH', 'DELETE'])
         return res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (error) {
@@ -138,6 +140,84 @@ const handlePATCH = async (req: NextApiRequest, res: NextApiResponse, supabase: 
     }
 
     return res.status(200).json(data)
+  } catch (error) {
+    const errorData = error as TApiError
+    return res.status(errorData.status).json({ error: errorData.message })
+  }
+}
+
+const handleDELETE = async (req: NextApiRequest, res: NextApiResponse, supabase: TSupabaseClient) => {
+  try {
+    const { projectId } = req.query as { projectId: string }
+
+    // Get current user's session
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      throw { status: 401, message: 'Unauthorized' } as TApiError
+    }
+
+    // Check if user has permission
+    const { data: memberData, error: memberError } = await supabase
+      .from('project_members')
+      .select('role')
+      .eq('project_id', projectId)
+      .eq('profile_id', user.id)
+      .single()
+
+    if (memberError || !memberData) {
+      throw { status: 403, message: 'Unauthorized' } as TApiError
+    }
+
+    if (!['administrator', 'owner'].includes(memberData.role)) {
+      throw { status: 403, message: 'Insufficient permissions' } as TApiError
+    }
+
+    // Delete all related data in the correct order
+    // 1. Delete all task files
+    await supabase
+      .from('task_files')
+      .delete()
+      .eq('project_id', projectId)
+
+    // 2. Delete all tasks
+    await supabase
+      .from('tasks')
+      .delete()
+      .eq('project_id', projectId)
+
+    // 3. Delete all sprints
+    await supabase
+      .from('sprints')
+      .delete()
+      .eq('project_id', projectId)
+
+    // 4. Delete all invitations
+    await supabase
+      .from('invitations')
+      .delete()
+      .eq('project_id', projectId)
+
+    // 5. Delete all project members
+    await supabase
+      .from('project_members')
+      .delete()
+      .eq('project_id', projectId)
+
+    // 6. Finally delete the project
+    const { error: deleteError } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', projectId)
+
+    if (deleteError) {
+      throw { status: 400, message: deleteError.message } as TApiError
+    }
+
+    return res.status(200).json({ message: 'Project deleted successfully' })
   } catch (error) {
     const errorData = error as TApiError
     return res.status(errorData.status).json({ error: errorData.message })

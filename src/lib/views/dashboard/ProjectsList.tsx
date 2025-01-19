@@ -18,8 +18,8 @@ export const ProjectsList = () => {
       ) : data?.length ? (
         <div className='flex w-full flex-col gap-4'>
           {data.map(project => (
-            <Link href={`/projects/${project.slug}`} passHref>
-              <Button key={project.id} className='flex w-full items-center gap-2'>
+            <Link key={project.id} href={`/projects/${project.slug}`} passHref>
+              <Button className='flex w-full items-center gap-2'>
                 {project.name}
               </Button>
             </Link>

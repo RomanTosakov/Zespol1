@@ -52,7 +52,7 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
 
     const { data: invites, error: invitesError } = await supabase
       .from('invitations')
-      .select('*, project:projects(*)')
+      .select('id, email, token, role, created_at, project:projects(*)')
       .eq('email', user.user.email)
 
     if (invitesError) {

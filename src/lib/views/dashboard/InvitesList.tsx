@@ -7,6 +7,14 @@ export const InvitesList = () => {
   const { data, isLoading } = useGetInvites()
   const acceptInvite = useAcceptInvite()
 
+  const handleAcceptInvite = (inviteId: string, token: string) => {
+    console.log('Accepting invite:', { inviteId, token })
+    acceptInvite.mutate({ 
+      id: inviteId,
+      token
+    })
+  }
+
   return (
     <div className='pr-6'>
       {isLoading ? (
@@ -24,9 +32,7 @@ export const InvitesList = () => {
 
                 <Button
                   isLoading={acceptInvite.isPending}
-                  onClick={() => {
-                    acceptInvite.mutate({ id: invite.id })
-                  }}
+                  onClick={() => handleAcceptInvite(invite.id, invite.token)}
                 >
                   Accept
                 </Button>

@@ -44,14 +44,27 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
     const { data: user, error: userError } = await supabase.auth.getUser()
     
     if (userError || !user || !user.user?.email) {
-      // Store invite data in query params to restore after auth
+      // Check if the invited email already has an account
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', invitation.email.toLowerCase())
+        .maybeSingle()
+
+      // Store invite data in query params
       const queryParams = new URLSearchParams({
         inviteId,
         token,
         email: invitation.email,
         redirect: 'true'
       })
-      return res.redirect(302, `/auth?${queryParams.toString()}`)
+
+      // Redirect to sign in if account exists, sign up if it doesn't
+      if (existingProfile) {
+        return res.redirect(302, `/auth?${queryParams.toString()}&authStep=sign-in`)
+      } else {
+        return res.redirect(302, `/auth?${queryParams.toString()}&authStep=sign-up`)
+      }
     }
 
     // Verify the invite is for this user

@@ -7,6 +7,7 @@ type TUseAcceptInvite = () => UseMutationResult<
   any,
   {
     id: string
+    token?: string
   },
   unknown
 >
@@ -15,7 +16,10 @@ export const useAcceptInvite: TUseAcceptInvite = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async form => {
-      return await axios.get(`/invites/${form.id}/accept`)
+      const url = form.token 
+        ? `/invites/${form.id}/accept?token=${form.token}`
+        : `/invites/${form.id}/accept`
+      return await axios.get(url)
     },
     onSuccess: async () => {
       const promiseUser = queryClient.invalidateQueries({
@@ -30,7 +34,6 @@ export const useAcceptInvite: TUseAcceptInvite = () => {
     },
     onError: (error: any) => {
       console.log(error)
-
       toast.error('Error accepting invite')
     }
   })

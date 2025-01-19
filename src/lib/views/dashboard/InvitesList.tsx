@@ -25,7 +25,10 @@ export const InvitesList = () => {
                 <Button
                   isLoading={acceptInvite.isPending}
                   onClick={() => {
-                    acceptInvite.mutate({ id: invite.id })
+                    acceptInvite.mutate({ 
+                      id: invite.id,
+                      token: invite.token
+                    })
                   }}
                 >
                   Accept

@@ -28,7 +28,15 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
     const { inviteId } = req.query as { inviteId: string }
     const { token } = req.query as { token: string }
 
-    // First, validate the invitation and token before checking user auth
+    console.log('Processing invite acceptance. Request query:', req.query)
+
+    if (!inviteId || !token) {
+      console.error('Missing required parameters:', { inviteId, token })
+      return res.status(400).json({ error: 'Missing required parameters' })
+    }
+
+    // First, validate the invitation and token
+    console.log('Fetching invitation from database:', { inviteId, token })
     const { data: invitation, error: inviteError } = await supabase
       .from('invitations')
       .select('*, project:projects(*)')
@@ -36,29 +44,33 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
       .eq('token', token)
       .maybeSingle()
 
-    if (inviteError || !invitation) {
-      return res.redirect(302, '/auth?error=invalid_invite')
+    console.log('Database response:', { invitation, error: inviteError })
+
+    if (inviteError) {
+      console.error('Error fetching invitation:', inviteError)
+      return res.status(400).json({ error: 'Invalid invite' })
     }
 
-    // Now check user authentication
+    if (!invitation) {
+      console.error('Invitation not found for:', { inviteId, token })
+      return res.status(404).json({ error: 'Invite not found' })
+    }
+
+    // Check user authentication
     const { data: user, error: userError } = await supabase.auth.getUser()
     
     if (userError || !user || !user.user?.email) {
-      // Store invite data in query params to restore after auth
-      const queryParams = new URLSearchParams({
-        inviteId,
-        token,
-        email: invitation.email,
-        redirect: 'true'
-      })
-      return res.redirect(302, `/auth?${queryParams.toString()}`)
+      console.error('Auth error:', userError || 'No user found')
+      return res.status(401).json({ error: 'Authentication required' })
     }
 
-    // Verify the invite is for this user
+    // Verify email match
     if (user.user.email.toLowerCase() !== invitation.email.toLowerCase()) {
-      return res.redirect(302, '/auth?error=email_mismatch')
+      console.error('Email mismatch:', { userEmail: user.user.email, inviteEmail: invitation.email })
+      return res.status(403).json({ error: 'Email mismatch' })
     }
 
+    // Get user profile
     const { data: userProfile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
@@ -66,30 +78,71 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse, supabase: TS
       .single()
 
     if (profileError || !userProfile) {
-      return res.redirect(302, '/auth?error=profile_not_found')
+      console.error('Error fetching user profile:', profileError || 'Profile not found')
+      return res.status(404).json({ error: 'User profile not found' })
     }
 
-    const { data: insertMember, error: insertMemberError } = await supabase.from('project_members').insert({
-      project_id: invitation.project_id,
-      profile_id: user.user.id,
-      name: userProfile.name ?? '',
-      role: invitation.role,
-      email: user.user.email
-    })
+    // Check if already a member
+    const { data: existingMember, error: existingMemberError } = await supabase
+      .from('project_members')
+      .select('*')
+      .eq('project_id', invitation.project_id)
+      .eq('profile_id', user.user.id)
+      .maybeSingle()
 
-    if (insertMemberError) {
-      return res.redirect(302, `/auth?error=member_insert_failed`)
+    if (existingMemberError) {
+      console.error('Error checking existing membership:', existingMemberError)
+      return res.status(500).json({ error: 'Error checking membership' })
     }
 
-    const { error: deleteError } = await supabase.from('invitations').delete().eq('id', inviteId)
+    if (existingMember) {
+      console.log('User is already a member')
+      return res.status(200).json({ 
+        message: 'Already a member',
+        project: invitation.project
+      })
+    }
+
+    // Add member
+    const { data: insertMember, error: insertMemberError } = await supabase
+      .from('project_members')
+      .insert({
+        project_id: invitation.project_id,
+        profile_id: user.user.id,
+        name: userProfile.name ?? '',
+        role: invitation.role,
+        email: user.user.email
+      })
+      .select()
+      .single()
+
+    if (insertMemberError || !insertMember) {
+      console.error('Error inserting member:', insertMemberError || 'No data returned')
+      return res.status(500).json({ error: 'Failed to add member' })
+    }
+
+    console.log('Successfully added member:', insertMember)
+
+    // Delete invitation
+    const { error: deleteError } = await supabase
+      .from('invitations')
+      .delete()
+      .eq('id', inviteId)
 
     if (deleteError) {
-      return res.redirect(302, `/auth?error=invite_delete_failed`)
+      console.error('Error deleting invitation:', deleteError)
+      // Log but don't fail the request
+      console.warn('Invitation deletion failed but member was added successfully')
     }
     
-    res.redirect(302, `/projects/${invitation.project_id}`)
+    // Return success with project data
+    return res.status(200).json({
+      message: 'Successfully joined project',
+      project: invitation.project,
+      member: insertMember
+    })
   } catch (error) {
     console.error('Error processing invite acceptance:', error)
-    return res.redirect(302, '/auth?error=server_error')
+    return res.status(500).json({ error: 'Server error' })
   }
 }

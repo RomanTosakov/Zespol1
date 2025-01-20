@@ -5,9 +5,13 @@ import { SprintRow } from './components/SprintRow'
 import { CreateSprintDialog } from './components/CreateSprintDialog'
 import NiceModal from '@ebay/nice-modal-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useCurrentMemberRole } from '@/lib/utils/api/hooks/Team/useCurrentMemberRole'
 
 export const SprintView = () => {
   const { sprints, isLoading } = useSprints()
+  const { data: currentRole } = useCurrentMemberRole()
+
+  const canCreateSprints = ['administrator', 'owner'].includes(currentRole?.toLowerCase() || '')
 
   const handleCreateSprint = () => {
     NiceModal.show(CreateSprintDialog)
@@ -17,10 +21,12 @@ export const SprintView = () => {
     <div className='w-full space-y-6 p-6'>
       <div className='flex w-full items-center justify-between'>
         <h1 className='text-2xl font-bold'>Sprints</h1>
-        <Button onClick={handleCreateSprint}>
-          <PlusIcon className='mr-2 h-4 w-4' />
-          New Sprint
-        </Button>
+        {canCreateSprints && (
+          <Button onClick={handleCreateSprint}>
+            <PlusIcon className='mr-2 h-4 w-4' />
+            New Sprint
+          </Button>
+        )}
       </div>
 
       <div className='space-y-2'>

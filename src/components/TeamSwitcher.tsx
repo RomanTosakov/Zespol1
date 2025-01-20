@@ -64,7 +64,7 @@ export const TeamSwitcher = () => {
           >
             <DropdownMenuLabel className='text-xs text-muted-foreground'>Teams</DropdownMenuLabel>
             {projects?.map((team, index) => (
-              <DropdownMenuItem key={team.name} onClick={() => handleProjectClick(team)} className='gap-2 p-2'>
+              <DropdownMenuItem key={team.id} onClick={() => handleProjectClick(team)} className='gap-2 p-2'>
                 <div className='flex size-6 items-center justify-center rounded-sm border'>
                   <FolderKanban className='size-4 shrink-0' />
                 </div>

@@ -29,6 +29,28 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
     const { projectId } = req.query as { projectId: string }
     const formData = req.body.formData as TSprintForm
 
+    // Get current user's ID
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      throw { status: 401, message: 'Unauthorized' } as TApiError
+    }
+
+    // Check if current user has permission to create sprints
+    const { data: currentMember, error: currentMemberError } = await supabase
+      .from('project_members')
+      .select('role')
+      .eq('project_id', projectId)
+      .eq('profile_id', user.id)
+      .single()
+
+    if (currentMemberError || !currentMember) {
+      throw { status: 403, message: 'Unauthorized' } as TApiError
+    }
+
+    if (!['administrator', 'owner'].includes(currentMember.role.toLowerCase())) {
+      throw { status: 403, message: 'Insufficient permissions' } as TApiError
+    }
+
     const { data, error } = await supabase
       .from('sprints')
       .insert([

@@ -3,13 +3,16 @@ import { UseMutationResult, useMutation, useQueryClient } from '@tanstack/react-
 import { toast } from 'sonner'
 import { axios } from '../../axios'
 import { useGetProfile } from '../useGetProfile'
+import { TProjectRole } from '@/lib/types/org'
 
+type TInviteRole = Exclude<TProjectRole, 'owner'>
 
 type TUseCreateInvite = () => UseMutationResult<
   any,
   any,
   {
     email: string
+    role: TInviteRole
   },
   unknown
 >

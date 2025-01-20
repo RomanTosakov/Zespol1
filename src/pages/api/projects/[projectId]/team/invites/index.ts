@@ -4,6 +4,9 @@ import { ValidateForm } from '@/lib/utils/api/ValidateForm'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { randomBytes } from 'crypto'
 import { NextApiRequest, NextApiResponse } from 'next/types'
+import { TProjectRole } from '@/lib/types/org'
+
+type TInviteRole = Exclude<TProjectRole, 'owner'>
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
@@ -30,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: TSupabaseClient) => {
   try {
-    const { email } = req.body.formData as { email: string }
+    const { email, role } = req.body.formData as { email: string; role: TInviteRole }
     const { projectId } = req.query as { projectId: string }
 
     const { data: user, error: userError } = await supabase.auth.getUser()
@@ -75,6 +78,24 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
         status: 400
       }
 
+      throw errorData
+    }
+
+    // Check if the inviter has sufficient permissions
+    if (invitedByUser.role !== 'owner' && invitedByUser.role !== 'administrator') {
+      const errorData: TApiError = {
+        message: 'Insufficient permissions to invite with this role',
+        status: 403
+      }
+      throw errorData
+    }
+
+    // Only owners can invite administrators
+    if (role === 'administrator' && invitedByUser.role !== 'owner') {
+      const errorData: TApiError = {
+        message: 'Only project owners can invite administrators',
+        status: 403
+      }
       throw errorData
     }
 
@@ -133,7 +154,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse, supabase: T
       project_id: projectId,
       invited_by: invitedByUser.id,
       token: randomBytes(32).toString('hex'),
-      role: 'member'
+      role: role || 'member'
     })
 
     if (insertError) {

@@ -11,10 +11,15 @@ import { format } from 'date-fns'
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { CalendarIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useCurrentMemberRole } from '@/lib/utils/api/hooks/Team/useCurrentMemberRole'
+import { toast } from 'sonner'
 
 export const CreateSprintDialog = NiceModal.create(() => {
   const modal = useModal()
   const { addSprint, isLoading } = useAddSprint()
+  const { data: currentRole } = useCurrentMemberRole()
+
+  const canCreateSprints = ['administrator', 'owner'].includes(currentRole?.toLowerCase() || '')
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -22,6 +27,11 @@ export const CreateSprintDialog = NiceModal.create(() => {
   const [endDate, setEndDate] = useState<Date>()
 
   const handleSubmit = () => {
+    if (!canCreateSprints) {
+      toast.error('You do not have permission to create sprints')
+      return
+    }
+
     addSprint(
       {
         name,
@@ -36,6 +46,11 @@ export const CreateSprintDialog = NiceModal.create(() => {
         }
       }
     )
+  }
+
+  if (!canCreateSprints) {
+    modal.hide()
+    return null
   }
 
   return (

@@ -10,7 +10,8 @@ export function formatBytes(
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
   const accurateSizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB']
 
-  if (bytes === 0) return '0 Byte'
+  // Handle edge cases
+  if (bytes <= 0 || !Number.isFinite(bytes)) return '0 Byte'
 
   const i = Math.floor(Math.log(bytes) / Math.log(1024))
 

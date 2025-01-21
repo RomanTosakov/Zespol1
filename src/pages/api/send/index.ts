@@ -19,6 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // Log the request data for debugging
+    console.log('Email request data:', { email, projectId, inviter });
+
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('name')
@@ -26,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .single();
 
     if (projectError || !project) {
+      console.error('Project fetch error:', projectError);
       return res.status(404).json({ error: 'Project not found' });
     }
 
@@ -46,10 +50,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .single();
 
     if (invitationError || !invitation) {
+      console.error('Invitation fetch error:', invitationError);
       return res.status(404).json({ error: 'Invitation not found' });
     }
 
     try {
+      // Log email template data
+      console.log('Sending email with data:', {
+        to: email,
+        subject: `${inviter.name} invited you to ${project.name}`,
+        templateData: {
+          firstName: recipientName,
+          inviterName: inviter.name,
+          projectName: project.name,
+          role: invitation.role,
+          inviteDate: invitation.created_at,
+          token: invitation.token,
+          inviteId: invitation.id,
+        }
+      });
+
       const { data: emailResult, error: emailError } = await resend.emails.send({
         from: 'Jira like team <noreply@tosakov.com>',
         to: [email],
@@ -67,16 +87,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (emailError) {
         console.error('Resend API error:', emailError);
-        throw new Error(`Failed to send email: ${emailError.message}`);
+        return res.status(500).json({ error: emailError.message });
       }
 
+      console.log('Email sent successfully:', emailResult);
       return res.status(200).json({ 
         message: 'Email sent successfully', 
         data: emailResult 
       });
     } catch (emailError) {
       console.error('Email sending error:', emailError);
-      throw new Error('Failed to send email through Resend API');
+      return res.status(500).json({ error: 'Failed to send email through Resend API' });
     }
   } catch (error) {
     console.error('Error processing request:', error);

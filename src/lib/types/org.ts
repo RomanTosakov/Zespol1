@@ -1,5 +1,7 @@
 import { Database } from './supabase-types'
 
+export type TRole = 'member' | 'administrator' | 'owner'
+
 export type TOrgForm = {
   name: string
 }

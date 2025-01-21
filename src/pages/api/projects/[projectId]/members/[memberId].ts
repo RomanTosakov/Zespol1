@@ -151,6 +151,36 @@ const handleDELETE = async (req: NextApiRequest, res: NextApiResponse, supabase:
       }
     }
 
+    // First, update any tasks assigned to this member to have no assignee
+    const { error: updateTasksError } = await supabase
+      .from('tasks')
+      .update({ member_id: null })
+      .eq('member_id', memberId)
+
+    if (updateTasksError) {
+      const errorData: TApiError = {
+        message: updateTasksError.message,
+        status: 400
+      }
+      throw errorData
+    }
+
+    // Delete any invitations created by this member
+    const { error: deleteInvitesError } = await supabase
+      .from('invitations')
+      .delete()
+      .eq('invited_by', memberId)
+
+    if (deleteInvitesError) {
+      const errorData: TApiError = {
+        message: deleteInvitesError.message,
+        status: 400
+      }
+      throw errorData
+    }
+
+    // Note: We don't need to handle tasks_comments because it has ON DELETE CASCADE
+
     // Delete the member
     const { error: deleteError } = await supabase
       .from('project_members')

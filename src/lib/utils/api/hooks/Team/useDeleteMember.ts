@@ -14,6 +14,8 @@ export const useDeleteMember = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['project-team', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['team', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['members', projectId] })
       toast.success('Member removed from project successfully')
     },
     onError: () => {

@@ -2,6 +2,22 @@ import { TApiError, TSupabaseClient } from '@/lib/types/api'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
+/**
+ * @api Team
+ * @description API endpoints for managing project team members
+ * 
+ * @endpoint GET /api/projects/[projectId]/team
+ * @description Get all team members for a project
+ * @param {string} projectId - Project identifier
+ * @returns {Promise<TProjectMember[]>} Array of team members
+ * 
+ * @throws {TApiError}
+ * - 401: Unauthorized
+ * - 403: Forbidden
+ * - 404: Project not found
+ * - 500: Server error
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
 

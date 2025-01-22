@@ -1,6 +1,19 @@
 import { createServerPropsSupabase } from '@/lib/utils/supabase/createServerPropsSupabase'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 
+/**
+ * @page Index
+ * @description Landing page with authentication routing
+ * @features
+ * - Authentication check
+ * - Route redirection
+ * - Session management
+ * @redirects
+ * - /projects: Authenticated users
+ * - /auth: Unauthenticated users
+ * - /500: Server errors
+ */
+
 export default function Home() {
   return null
 }

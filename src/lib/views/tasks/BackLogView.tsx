@@ -10,6 +10,20 @@ import { useChangeOrder } from '@/lib/utils/api/hooks/Tasks/useChangeOrder'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
+/**
+ * @component BackLogView
+ * @description Manages and displays the project backlog with task management capabilities
+ * @features
+ * - Task list display
+ * - Drag and drop task reordering
+ * - Task creation
+ * - Task status management
+ * - Task details modal
+ * @hooks
+ * - useTasks: Fetches and manages task data
+ * - useChangeOrder: Handles task reordering
+ */
+
 export const BackLogView: React.FC = () => {
   const { tasks, isLoading } = useTasks()
   const { mutate: changeOrder } = useChangeOrder()

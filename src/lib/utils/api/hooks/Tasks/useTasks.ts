@@ -3,6 +3,20 @@ import { useQuery } from '@tanstack/react-query'
 import { axios } from '../../axios'
 import { TTask } from '@/lib/types/tasks'
 
+/**
+ * @hook useTasks
+ * @description Custom hook for managing project tasks
+ * @features
+ * - Fetches all tasks for current project
+ * - Provides task data and loading state
+ * - Auto-updates on task changes
+ * - Handles task caching
+ * @returns {Object}
+ * - tasks: Array of project tasks
+ * - isLoading: Loading state
+ * - error: Error state if any
+ */
+
 export const useTasks = () => {
   const projectId = useGetProjectId()
 

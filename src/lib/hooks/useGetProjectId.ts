@@ -8,6 +8,18 @@ type TResponse = {
   id: string
 }
 
+/**
+ * @hook useGetProjectId
+ * @description Custom hook for managing current project context and ID
+ * @features
+ * - Extracts project ID from URL slug
+ * - Manages project context in global store
+ * - Handles project navigation
+ * - Provides project ID to child components
+ * @returns {string} Current project ID
+ * @throws Redirects to home page if project is not found
+ */
+
 export const useGetProjectId = () => {
   const { query, push } = useRouter()
 

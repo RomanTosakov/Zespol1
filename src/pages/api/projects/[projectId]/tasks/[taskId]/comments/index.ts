@@ -2,6 +2,30 @@ import { TApiError, TSupabaseClient } from '@/lib/types/api'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
+/**
+ * @api Task Comments
+ * @description API endpoints for managing task comments
+ * 
+ * @endpoint GET /api/projects/[projectId]/tasks/[taskId]/comments
+ * @description Get all comments for a task
+ * @param {string} projectId - Project identifier
+ * @param {string} taskId - Task identifier
+ * @returns {Promise<TTaskComment[]>} Array of task comments
+ * 
+ * @endpoint POST /api/projects/[projectId]/tasks/[taskId]/comments
+ * @description Create a new comment
+ * @param {string} projectId - Project identifier
+ * @param {string} taskId - Task identifier
+ * @body {string} title - Comment content
+ * @returns {Promise<TTaskComment>} Created comment
+ * 
+ * @throws {TApiError}
+ * - 401: Unauthorized
+ * - 403: Forbidden
+ * - 404: Task not found
+ * - 500: Server error
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
 

@@ -4,6 +4,28 @@ import { TSprintForm, TSprint } from '@/lib/types/sprints'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
+/**
+ * @api Sprints
+ * @description API endpoints for managing project sprints
+ * 
+ * @endpoint GET /api/projects/[projectId]/sprints
+ * @description Get all sprints for a project
+ * @param {string} projectId - Project identifier
+ * @returns {Promise<TSprint[]>} Array of project sprints
+ * 
+ * @endpoint POST /api/projects/[projectId]/sprints
+ * @description Create a new sprint
+ * @param {string} projectId - Project identifier
+ * @body {TSprintForm} formData - Sprint creation data
+ * @returns {Promise<TSprint>} Created sprint
+ * 
+ * @throws {TApiError}
+ * - 401: Unauthorized
+ * - 403: Forbidden
+ * - 404: Project not found
+ * - 500: Server error
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
 

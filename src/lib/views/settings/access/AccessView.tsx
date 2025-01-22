@@ -1,3 +1,15 @@
+/**
+ * @component AccessView
+ * @description Manages project access and member permissions
+ * @features
+ * - Member role management
+ * - Access control
+ * - Member removal
+ * - Role-based permissions
+ * @hooks
+ * - useProjectTeam: Fetches team member data
+ */
+
 import { Card } from '@/components/ui/card'
 import { useProjectTeam } from '@/lib/utils/api/hooks/Team/useProjectTeam'
 import { MemberRow } from './components/MemberRow'

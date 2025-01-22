@@ -5,6 +5,17 @@ import { SignUpForm } from './components/SignUpForm'
 import { SignInForm } from './components/SignInForm'
 import { useRouter } from 'next/router'
 
+/**
+ * @component AuthView
+ * @description Main authentication component that handles user sign-in and sign-up flows
+ * @features
+ * - Email verification
+ * - Sign in with existing account
+ * - New user registration
+ * - Invitation acceptance
+ * - Password management
+ */
+
 export const AuthView = () => {
   const [step, setStep] = useState<TAuthSteps>('enter-email')
   const [email, setEmail] = useState<string | null>(null)

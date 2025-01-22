@@ -5,6 +5,18 @@ import { ValidateForm } from '@/lib/utils/api/ValidateForm'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
+/**
+ * @api Authentication
+ * @endpoint POST /api/auth/signUp
+ * @description Handles new user registration
+ * @body {TSignUpForm} formData - Registration data
+ * @returns {Promise<void>}
+ * @throws {TApiError}
+ * - 400: Invalid registration data
+ * - 409: Email already exists
+ * - 500: Server error
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
 

@@ -5,6 +5,18 @@ import { ValidateForm } from '@/lib/utils/api/ValidateForm'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
+/**
+ * @api Authentication
+ * @endpoint POST /api/auth/signIn
+ * @description Handles user authentication and sign in
+ * @body {TSignInForm} formData - Login credentials
+ * @returns {Promise<void>}
+ * @throws {TApiError} 
+ * - 400: Invalid credentials
+ * - 401: Unauthorized
+ * - 500: Server error
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
 

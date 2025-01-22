@@ -6,6 +6,19 @@ import { ProjectsList } from './ProjectsList'
 import { Separator } from '@/components/ui/separator'
 import Head from 'next/head'
 
+/**
+ * @component DashboardView
+ * @description Main dashboard interface for project management
+ * @features
+ * - Project list display
+ * - Project creation
+ * - Invitation management
+ * - Project navigation
+ * @components
+ * - ProjectsList: Displays user's projects
+ * - InvitesList: Shows pending project invitations
+ */
+
 export const DashboardView = () => {
   return (
     <div className='flex h-full w-full items-center justify-center'>

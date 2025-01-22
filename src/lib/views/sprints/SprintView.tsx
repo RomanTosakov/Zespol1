@@ -7,6 +7,19 @@ import NiceModal from '@ebay/nice-modal-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCurrentMemberRole } from '@/lib/utils/api/hooks/Team/useCurrentMemberRole'
 
+/**
+ * @component SprintView
+ * @description Manages sprint planning and execution
+ * @features
+ * - Sprint list display
+ * - Sprint creation
+ * - Sprint details view
+ * - Sprint status management
+ * - Task assignment to sprints
+ * @hooks
+ * - useSprints: Fetches and manages sprint data
+ */
+
 export const SprintView = () => {
   const { sprints, isLoading } = useSprints()
   const { data: currentRole } = useCurrentMemberRole()

@@ -4,6 +4,34 @@ import { TInsertTask, TTask, TTaskForm, TTaskOrderChange } from '@/lib/types/tas
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
+/**
+ * @api Tasks
+ * @description API endpoints for managing project tasks
+ * 
+ * @endpoint GET /api/projects/[projectId]/tasks
+ * @description Get all tasks for a project
+ * @param {string} projectId - Project identifier
+ * @returns {Promise<TTask[]>} Array of project tasks
+ * 
+ * @endpoint POST /api/projects/[projectId]/tasks
+ * @description Create a new task
+ * @param {string} projectId - Project identifier
+ * @body {TTaskForm} formData - Task creation data
+ * @returns {Promise<TTask>} Created task
+ * 
+ * @endpoint PUT /api/projects/[projectId]/tasks
+ * @description Update task order
+ * @param {string} projectId - Project identifier
+ * @body {TTaskOrderChange[]} changes - Task order changes
+ * @returns {Promise<void>}
+ * 
+ * @throws {TApiError}
+ * - 401: Unauthorized
+ * - 403: Forbidden
+ * - 404: Project not found
+ * - 500: Server error
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
 

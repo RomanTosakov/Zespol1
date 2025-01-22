@@ -2,6 +2,30 @@ import { TApiError, TSupabaseClient } from '@/lib/types/api'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
 
+/**
+ * @api Project Members
+ * @description API endpoints for managing project member roles and access
+ * 
+ * @endpoint PATCH /api/projects/[projectId]/members/[memberId]
+ * @description Update member role
+ * @param {string} projectId - Project identifier
+ * @param {string} memberId - Member identifier
+ * @body {TProjectRole} role - New role
+ * @returns {Promise<void>}
+ * 
+ * @endpoint DELETE /api/projects/[projectId]/members/[memberId]
+ * @description Remove member from project
+ * @param {string} projectId - Project identifier
+ * @param {string} memberId - Member identifier
+ * @returns {Promise<void>}
+ * 
+ * @throws {TApiError}
+ * - 401: Unauthorized
+ * - 403: Insufficient permissions
+ * - 404: Member not found
+ * - 500: Server error
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)
 

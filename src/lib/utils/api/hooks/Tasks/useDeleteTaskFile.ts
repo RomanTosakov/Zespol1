@@ -7,6 +7,22 @@ type TDeleteTaskFileParams = {
   fileId: string
 }
 
+/**
+ * Custom hook to delete a file attachment from a task
+ * 
+ * @remarks
+ * This hook:
+ * - Deletes a file using file ID and task ID
+ * - Uses project ID from context
+ * - Invalidates both task list and specific task cache
+ * - Returns all mutation properties except mutate directly
+ * 
+ * @returns {UseMutationResult} Mutation object containing:
+ *   - mutate: Function to delete file with {@link TDeleteTaskFileParams}
+ *   - isLoading: Boolean indicating if the deletion is in progress
+ *   - error: Error object if the deletion failed
+ *   - Other standard react-query mutation properties
+ */
 export const useDeleteTaskFile = () => {
   const projectId = useGetProjectId()
   const queryClient = useQueryClient()

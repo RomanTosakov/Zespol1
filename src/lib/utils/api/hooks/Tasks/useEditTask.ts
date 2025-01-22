@@ -14,6 +14,23 @@ type TUseEditTask = () => UseMutationResult<
   unknown
 >
 
+/**
+ * Custom hook to edit an existing task
+ * 
+ * @remarks
+ * This hook:
+ * - Updates a task using the provided task data and ID
+ * - Uses project ID from context
+ * - Invalidates tasks, task details, and sprints cache on success
+ * - Shows success/error toast notifications
+ * - Returns the updated task data
+ * 
+ * @returns {UseMutationResult} Mutation object containing:
+ *   - mutate: Function to trigger task update with { formData: {@link TTask}, id: string }
+ *   - isLoading: Boolean indicating if the mutation is in progress
+ *   - error: Error object if the mutation failed
+ *   - Other standard react-query mutation properties
+ */
 export const useEditTask: TUseEditTask = () => {
   const projectId = useGetProjectId()
   const queryClient = useQueryClient()

@@ -3,7 +3,21 @@ import { createBrowserSupabase } from '@/lib/utils/supabase/createBrowserSupabas
 import { Tables } from '@/lib/types/supabase-types'; // Путь к вашим типам
 import { useEffect, useState } from 'react';
 
-// Хук для получения профиля текущего пользователя
+/**
+ * Custom hook to fetch the current user's profile from Supabase
+ * 
+ * @remarks
+ * This hook:
+ * 1. Fetches the current user's ID from Supabase auth
+ * 2. Uses the ID to fetch the complete profile from the profiles table
+ * 3. Only executes the profile query when userId is available
+ * 
+ * @returns {Object} Object containing:
+ *   - profile: User profile data from 'profiles' table ({@link Tables<'profiles'>})
+ *   - isLoading: Boolean indicating if the query is loading
+ *   - isError: Boolean indicating if an error occurred
+ *   - error: Error object if the query failed
+ */
 export const useGetProfile = () => {
   const supabase = createBrowserSupabase();
     

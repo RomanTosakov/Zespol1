@@ -8,6 +8,23 @@ type TDeleteCommentParams = {
   commentId: string
 }
 
+/**
+ * Custom hook to delete a task comment
+ * 
+ * @remarks
+ * This hook:
+ * - Deletes a comment using comment ID and task ID
+ * - Uses project ID from context
+ * - Invalidates both task list and specific task cache
+ * - Shows success/error toast notifications
+ * - Handles error messages from the API response
+ * 
+ * @returns {UseMutationResult} Mutation object containing:
+ *   - mutate: Function to delete comment with {@link TDeleteCommentParams}
+ *   - isLoading: Boolean indicating if the mutation is in progress
+ *   - error: Error object if the mutation failed
+ *   - Other standard react-query mutation properties
+ */
 export const useDeleteComment = () => {
   const projectId = useGetProjectId()
   const queryClient = useQueryClient()

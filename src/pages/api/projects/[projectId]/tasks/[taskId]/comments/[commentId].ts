@@ -1,8 +1,6 @@
 import { TApiError, TSupabaseClient } from '@/lib/types/api'
 import { createServerSupabase } from '@/lib/utils/supabase/createServerSupabase'
 import { NextApiRequest, NextApiResponse } from 'next/types'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/lib/types/supabase-types'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerSupabase(req, res)

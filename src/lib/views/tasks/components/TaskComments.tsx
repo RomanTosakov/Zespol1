@@ -3,11 +3,28 @@ import { Input } from '@/components/ui/input'
 import { TTask, TTaskComment } from '@/lib/types/tasks'
 import { useAddComment } from '@/lib/utils/api/hooks/Tasks/useAddComment'
 import { useEditComment } from '@/lib/utils/api/hooks/Tasks/useEditComment'
+import { useDeleteComment } from '@/lib/utils/api/hooks/Tasks/useDeleteComment'
 import { useProjectTeam } from '@/lib/utils/api/hooks/Team/useProjectTeam'
+import { useCurrentMemberRole } from '@/lib/utils/api/hooks/Team/useCurrentMemberRole'
 import { useUser } from '@/lib/utils/api/hooks/useUser'
 import { format } from 'date-fns'
-import { PencilIcon } from 'lucide-react'
+import { PencilIcon, TrashIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { axios } from '@/lib/utils/api/axios'
+import { useGetProjectId } from '@/lib/hooks/useGetProjectId'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type TaskCommentsProps = {
   task: TTask
@@ -20,9 +37,18 @@ export const TaskComments = ({ task }: TaskCommentsProps) => {
 
   const addComment = useAddComment()
   const editComment = useEditComment()
+  const deleteComment = useDeleteComment()
   const { data: teamMembers } = useProjectTeam()
-
+  const { data: currentRole } = useCurrentMemberRole()
   const { data: currentUser } = useUser()
+  const queryClient = useQueryClient()
+  const projectId = useGetProjectId()
+
+  const canDeleteComment = (commentAuthorId: string) => {
+    if (!currentUser || !currentRole) return false
+    if (currentRole === 'owner' || currentRole === 'administrator') return true
+    return currentUser.id === commentAuthorId
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,9 +67,20 @@ export const TaskComments = ({ task }: TaskCommentsProps) => {
     )
   }
 
-  const handleEdit = (comment: TTaskComment) => {
-    setEditingComment(comment)
-    setEditedTitle(comment.title)
+  const handleEdit = async (comment: TTaskComment) => {
+    try {
+      // Check if comment still exists
+      const response = await axios.get(`/projects/${projectId}/tasks/${task.id}/comments/${comment.id}`)
+      if (response.data) {
+        setEditingComment(comment)
+        setEditedTitle(comment.title)
+      }
+    } catch (error) {
+      toast.error('This comment no longer exists')
+      // Refresh the task data to remove the deleted comment
+      await queryClient.invalidateQueries({ queryKey: ['task', task.id] })
+      await queryClient.invalidateQueries({ queryKey: ['tasks', projectId] })
+    }
   }
 
   const handleSaveEdit = (e: React.FormEvent) => {
@@ -63,6 +100,13 @@ export const TaskComments = ({ task }: TaskCommentsProps) => {
         }
       }
     )
+  }
+
+  const handleDelete = (commentId: string) => {
+    deleteComment.mutate({
+      taskId: task.id,
+      commentId
+    })
   }
 
   return (
@@ -87,6 +131,7 @@ export const TaskComments = ({ task }: TaskCommentsProps) => {
           .map(comment => {
             const member = comment.member_id ? teamMembers?.find(member => member.id === comment.member_id) : null
             const isEditing = editingComment?.id === comment.id
+            const canDelete = canDeleteComment(member?.profile_id || '')
 
             return (
               <div key={comment.id} className='space-y-1'>
@@ -96,11 +141,39 @@ export const TaskComments = ({ task }: TaskCommentsProps) => {
                     {format(new Date(comment.created_at), 'MMM d, yyyy h:mm a')}
                     {comment.edited_at && ' (edited)'}
                   </span>
-                  {member?.profile_id === currentUser?.id && !isEditing && (
-                    <Button variant='ghost' size='icon' className='h-6 w-6' onClick={() => handleEdit(comment)}>
-                      <PencilIcon className='h-3 w-3' />
-                    </Button>
-                  )}
+                  <div className='flex gap-1'>
+                    {member?.profile_id === currentUser?.id && !isEditing && (
+                      <Button variant='ghost' size='icon' className='h-6 w-6' onClick={() => handleEdit(comment)}>
+                        <PencilIcon className='h-3 w-3' />
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant='ghost' size='icon' className='h-6 w-6'>
+                            <TrashIcon className='h-3 w-3 text-destructive' />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Comment</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this comment? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleDelete(comment.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </div>
                 </div>
                 {isEditing ? (
                   <form onSubmit={handleSaveEdit} className='flex gap-2'>

@@ -1,0 +1,16 @@
+{
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "exclude": ["**/node_modules/**", "**/*.test.ts", "**/*.test.tsx"],
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "theme": "default",
+  "categorizeByGroup": true,
+  "categoryOrder": ["Components", "Hooks", "Utils", "Types", "*"],
+  "name": "Zespol1-5 Documentation",
+  "includeVersion": true,
+  "searchInComments": true,
+  "plugin": ["typedoc-plugin-merge-modules"]
+} 

@@ -9,6 +9,25 @@ type TMemberResponse = {
   project_id: string
 }
 
+/**
+ * Custom hook to fetch and manage the current user's role in the project
+ * 
+ * @remarks
+ * This hook:
+ * - Fetches the current user's role in the project
+ * - Provides a function to invalidate and refetch role data
+ * - Includes extensive error handling and logging
+ * - Uses a 30-second stale time for caching
+ * - Only retries failed requests once
+ * - Only executes when project ID is available
+ * 
+ * @returns {Object} Extended query result object containing:
+ *   - data: Current user's role (string)
+ *   - isLoading: Boolean indicating if the query is loading
+ *   - error: Error object if the query failed
+ *   - invalidateRole: Function to force refresh role data
+ *   - Other standard react-query properties
+ */
 export const useCurrentMemberRole = () => {
   const projectId = useGetProjectId()
   const queryClient = useQueryClient()

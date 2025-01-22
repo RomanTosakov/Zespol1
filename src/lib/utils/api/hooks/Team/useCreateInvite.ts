@@ -17,6 +17,28 @@ type TUseCreateInvite = () => UseMutationResult<
   unknown
 >
 
+/**
+ * Custom hook to create and send a project invitation
+ * 
+ * @remarks
+ * This hook:
+ * - Creates a project invitation for a given email with specified role
+ * - Sends an email notification to the invitee
+ * - Invalidates relevant caches on success
+ * - Handles various error cases with specific messages
+ * - Requires inviter's profile information
+ * 
+ * Error cases handled:
+ * - 422: Invalid email
+ * - 408: User already invited
+ * - 409: User already in team
+ * 
+ * @returns {UseMutationResult} Mutation object containing:
+ *   - mutate: Function to create invite with { email: string, role: {@link TInviteRole} }
+ *   - isLoading: Boolean indicating if the mutation is in progress
+ *   - error: Error object if the mutation failed
+ *   - Other standard react-query mutation properties
+ */
 export const useCreateInvite: TUseCreateInvite = () => {
   const { profile: inviter, isLoading, isError, error: userError } = useGetProfile();
   const projectId = useGetProjectId()

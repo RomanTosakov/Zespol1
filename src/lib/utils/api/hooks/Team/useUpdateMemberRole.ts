@@ -9,6 +9,21 @@ type UpdateRoleParams = {
   role: TProjectMember['role']
 }
 
+/**
+ * Custom hook to update a team member's role in the current project
+ * 
+ * @remarks
+ * This hook:
+ * - Updates a member's role using project ID from context
+ * - Invalidates team cache on success
+ * - Shows success/error toast notifications
+ * 
+ * @returns {UseMutationResult} Mutation object containing:
+ *   - mutate: Function to trigger role update with {@link UpdateRoleParams}
+ *   - isLoading: Boolean indicating if the mutation is in progress
+ *   - error: Error object if the mutation failed
+ *   - Other standard react-query mutation properties
+ */
 export const useUpdateMemberRole = () => {
   const projectId = useGetProjectId()
   const queryClient = useQueryClient()

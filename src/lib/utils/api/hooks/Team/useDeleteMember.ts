@@ -10,6 +10,22 @@ type DeleteMemberParams = {
   profileId: string
 }
 
+/**
+ * Custom hook to remove a member from the current project
+ * 
+ * @remarks
+ * This hook:
+ * - Removes a team member from the current project
+ * - Handles cache invalidation for team-related queries
+ * - Shows success/error toast notifications
+ * - Redirects to dashboard if the user removes themselves
+ * 
+ * @returns {UseMutationResult} Mutation object containing:
+ *   - mutate: Function to trigger member removal with {@link DeleteMemberParams}
+ *   - isLoading: Boolean indicating if the mutation is in progress
+ *   - error: Error object if the mutation failed
+ *   - Other standard react-query mutation properties
+ */
 export const useDeleteMember = () => {
   const projectId = useGetProjectId()
   const queryClient = useQueryClient()

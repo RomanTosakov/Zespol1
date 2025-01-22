@@ -75,7 +75,10 @@ export const MemberRow = ({ member }: MemberRowProps) => {
       cancelText: 'Cancel',
       variant: 'destructive',
       onConfirm: () => {
-        deleteMember.mutate(member.id)
+        deleteMember.mutate({
+          memberId: member.id,
+          profileId: member.profile_id
+        })
       }
     })
   }

@@ -68,19 +68,12 @@ export const TaskComments = ({ task }: TaskCommentsProps) => {
   }
 
   const handleEdit = async (comment: TTaskComment) => {
-    try {
-      // Check if comment still exists
-      const response = await axios.get(`/projects/${projectId}/tasks/${task.id}/comments/${comment.id}`)
-      if (response.data) {
+ 
+  
         setEditingComment(comment)
         setEditedTitle(comment.title)
-      }
-    } catch (error) {
-      toast.error('This comment no longer exists')
-      // Refresh the task data to remove the deleted comment
-      await queryClient.invalidateQueries({ queryKey: ['task', task.id] })
-      await queryClient.invalidateQueries({ queryKey: ['tasks', projectId] })
-    }
+      
+  
   }
 
   const handleSaveEdit = (e: React.FormEvent) => {

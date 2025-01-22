@@ -1,3 +1,5 @@
+import { Card } from "@/components/ui/card"
+
 export const TeamTable = () => {
   return (
     <Card className="w-full">

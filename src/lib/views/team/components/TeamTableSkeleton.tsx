@@ -1,3 +1,6 @@
+import { Card } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+
 export const TeamTableSkeleton = () => {
   return (
     <Card className="w-full">
